@@ -745,71 +745,49 @@ textarea {
   background: #02db02;
 }
 
-.pricing-block .row {
+.surveyintro-block .row {
   align-items: center;
   margin: 0;
 }
 
-.pricing-block .row>div {
+.surveyintro-block .row>div {
   text-align: center;
   padding: 0;
   position: relative;
   overflow: hidden;
 }
 
-.pricing-block .heading {
+.surveyintro-block .heading {
   background: #e6e6e6;
   padding: 15px 60px;
 }
 
-.pricing-block .content .list-group-item {
-  padding: 10px 20px;
-  border: 0;
-  background: #f7f7f7;
+.surveyintro-block .heading {
+  background: #e6e6e6;
+  padding: 15px 60px;
 }
 
-.pricing-block .content .list-group-item:nth-child(2n-1) {
-  background: #ededed;
-}
-
-.pricing-block .btn-holder {
+.surveyintro-block .btn-holder {
   padding: 30px 20px;
 }
 
-.pricing-block div[class*="col"]:nth-child(2) {
+.surveyintro-block div[class*="col"]:nth-child(2) {
   box-shadow: 0 0 40px 5px #e0e0e0;
   position: relative;
 }
 
-.pricing-block div[class*="col"]:nth-child(2) .heading {
-  padding: 30px 20px;
+.surveyintro-block div[class*="col"] .heading {
   background: #02db02;
   color: #fff;
 }
 
-.pricing-block div[class*="col"]:nth-child(2):before {
-  content: 'Popular';
-  text-transform: uppercase;
-  position: absolute;
-  top: 40px;
-  left: 40px;
-  background: #f76363;
-  color: #fff;
-  padding: 5px 10px;
-  transform: translateX(-50%) translateY(-50%) rotate(-45deg);
-  -webkit-transform: translateX(-50%) translateY(-50%) rotate(-45deg);
-  font-size: 12px;
-  text-transform: uppercase;
-  width: 150px;
-}
-
-.pricing-block h3 {
+.surveyintro-block h3 {
   text-transform: uppercase;
   margin: 0;
 }
 
-.pricing-block .price {
-  font-size: 35px;
+.surveyintro-block .tiers {
+  font-size: 30px;
   line-height: 45px;
 }
 
@@ -1037,6 +1015,42 @@ textarea {
   }
 
   .go-top {
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    text-indent: 101%;
+    white-space: nowrap;
+    transition: all 0.3s linear;
+    -webkit-transition: all 0.3s linear;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #02db02;
+    border-radius: 3px;
+    color: #fff;
+    border: 0;
+  }
+  
+  .go-top:before {
+    width: 13px;
+    height: 13px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    content: '';
+    border-style: solid;
+    border-color: #fff;
+    border-width: 1px 1px 0 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -3px 0 0 -6px;
+  }
+  
+  .go-top:hover {
+    background: #f41a1a;
+  }
+  
+  .go-top {
     width: 40px;
     height: 40px;
   }
@@ -1132,7 +1146,7 @@ textarea {
     margin: 0;
   }
 
-  .pricing-block {
+  .surveyintro-block {
     padding: 40px 0 20px;
   }
 
@@ -1175,4 +1189,13 @@ textarea {
     font-size: 26px;
     margin: 0;
   }
+}
+
+.tiertable th {
+  width: 9%;
+}
+
+.SurveyIntro .btn-holder .start-survey {
+  position: absolute;
+  background-color: #d10a0a !important;
 }

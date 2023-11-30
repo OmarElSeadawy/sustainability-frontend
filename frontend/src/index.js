@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Survey from './pages/survey'
+import SurveyLanding from './pages/surveylanding'
 import ErrorPage from './pages/errorpage';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -18,8 +18,8 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "survey",
-    element: <Survey />,
+    path: "surveyintro",
+    element: <SurveyLanding />,
     errorElement: <ErrorPage />,
   },
 ]);

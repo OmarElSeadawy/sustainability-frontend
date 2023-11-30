@@ -14,7 +14,7 @@ export default function AppHeader() {
                 <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
                     <Nav.Link as={Link} to="/" activeStyle={{borderBottom: 'solid 3px #fff', paddingBottom: '1em'}}>Home</Nav.Link>
-                    <Nav.Link as={Link} to="/survey" activeStyle={{borderBottom: 'solid 3px #fff', paddingBottom: '1em'}}>Survey</Nav.Link>
+                    <Nav.Link as={Link} to="/surveyintro" activeStyle={{borderBottom: 'solid 3px #fff', paddingBottom: '1em'}}>Survey</Nav.Link>
                     <NavDropdown title="About us" id="basic-nav-dropdown">
                     <NavDropdown.Item href="/#objective">Project Objective</NavDropdown.Item>
                     <NavDropdown.Item href="/#services">Our Services</NavDropdown.Item>
