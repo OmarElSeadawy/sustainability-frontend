@@ -33,17 +33,23 @@ class LoginSerializer(serializers.Serializer):
 
 
     def validate(self, attrs):
+        print("Validator start")
         email = attrs.get('email')
         password = attrs.get('password')
 
+        print(email)
+        print(password)
         if not email or not password:
+            print("Please Give Email and Password")
             raise serializers.ValidationError("Please give both email and password.")
 
         if not CustomUser.objects.filter(email=email).exists():
+            print("Email Does not exist")
             raise serializers.ValidationError('Email does not exist.')
 
         user = authenticate(request=self.context.get('request'), email=email,
                             password=password)
+        print(user)
         if not user:
             raise serializers.ValidationError("Wrong Credentials.")
 

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import RegexValidator, EmailValidator
+from django.db.models import JSONField
 
 
 class UserManager(BaseUserManager):
@@ -13,6 +14,19 @@ class UserManager(BaseUserManager):
         user.save()
         return user
         
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        
+        extra_fields.setdefault('is_staff', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+
+        return self.create_user(email, password, **extra_fields)
+    
 class CustomUser(AbstractBaseUser):
     full_name = models.CharField(max_length=255, null=False, blank=False,
                                  help_text='Full name should contain only letters.',
@@ -23,6 +37,9 @@ class CustomUser(AbstractBaseUser):
                                          code='invalid_full_name'
                                      )
                                  ])
+
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     mobile_number = models.CharField(
         max_length=10,
@@ -63,3 +80,18 @@ class CustomUser(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+    
+    def has_perm(self, perm, obj=None):
+        return self.is_superuser
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser
+    
+class Survey(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    survey_name = models.CharField(max_length=255)
+    is_editable = models.BooleanField(default=True)
+    survey_output = JSONField()
+
+    class Meta:
+        db_table = 'survey'

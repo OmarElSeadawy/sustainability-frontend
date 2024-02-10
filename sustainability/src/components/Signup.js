@@ -12,7 +12,7 @@ export const Signup = () => {
         bodyFormData.append("password", e.target.password.value);
         axios({
             method: "post",
-            url: `${BASE_URL}/login/`,
+            url: `${BASE_URL}/register/`,
             data: bodyFormData,
             headers: { "Content-Type": "multipart/form-data" },
         })
@@ -21,6 +21,7 @@ export const Signup = () => {
             })
             .catch(function (response) {
                 console.log(response)
+
             });
     }
 

@@ -119,7 +119,15 @@ USE_I18N = True
 
 USE_TZ = True
 
-CORS_ORIGIN_ALLOW_ALL = True
+if DEBUG:
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ORIGIN_ALLOW_ALL = False
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",  # or the address where your frontend is running
+    ]
+    
+CORS_ALLOW_CREDENTIALS = True
 
 REST_KNOX = {
     'USER_SERIALIZER': 'susapi.serializers.UserSerializer',

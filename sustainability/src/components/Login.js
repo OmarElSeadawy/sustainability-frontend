@@ -1,7 +1,10 @@
 import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const Login = () => {
 
+    const navigate = useNavigate();
+    const location = useLocation();
     const BASE_URL = 'http://127.0.0.1:8000/auth';
 
     const handleSubmit = async (e) => {
@@ -9,19 +12,28 @@ export const Login = () => {
         var bodyFormData = new FormData();
         bodyFormData.append("email", e.target.email.value);
         bodyFormData.append("password", e.target.password.value);
+        const from = location.state?.from || '/home';
+        
         axios({
             method: "post",
             url: `${BASE_URL}/login/`,
             data: bodyFormData,
             headers: { "Content-Type": "multipart/form-data" },
+            withCredentials: true,
         })
             .then(function (response) {
-                console.log(response)
+                // Handle successful login here, e.g. storing the user data or token
+                console.log(response);
+                localStorage.setItem('authToken', response.data.token);
+                // After successful login, redirect the user back to the page they were trying to access
+                navigate(from);
             })
             .catch(function (response) {
-                console.log(response)
+                // Handle error here
+                console.log(response);
             });
     }
+
 
     return (
         <div className="container" style={{ paddingTop: '100px' }}>

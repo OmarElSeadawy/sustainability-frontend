@@ -4,12 +4,22 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
+import Table from 'react-bootstrap/Table'
+import Container from 'react-bootstrap/Container';
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 export const MultiStepForm = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState({});
 
-    const steps = ['Consent', 'General Knowledge', 'Phase1', 'Phase2', 'Phase3', 'Phase4'];
+    const steps = ['Introduction', 'Campus Information', 'Energy', 'Transportation', 'Water Consumption', 'Solid Water Disposal', 'Paper Use', 'Refrigerants', 'Landscaping', 'End'];
+
+    const renderTooltip = (props) => (
+        <Tooltip id="button-tooltip" {...props} style={{ backgroundColor: '#f5f5f5', color: 'black', borderRadius: '15px', padding: '10px', fontSize: '12px', ...props.style }}>
+            This is a tooltip.
+        </Tooltip>
+    );
 
     const next = () => setCurrentStep(currentStep + 1);
     const previous = () => setCurrentStep(currentStep - 1);
@@ -39,7 +49,7 @@ export const MultiStepForm = () => {
         );
     }
 
-    const Consent = ({ formData, setFormData, next }) => {
+    const Introduction = ({ formData, setFormData, next }) => {
 
         const [validated, setValidated] = useState(false);
 
@@ -64,7 +74,27 @@ export const MultiStepForm = () => {
 
             <>
                 <div className="text-center" style={{ paddingTop: 55, width: 1200 }}>
-                    <p className="fs-5 text-body">I consent to "---------------------------------------------------------------" </p>
+                    <p className="fs-5 text-body">This is an introduction to the survey. What information will be required and what will you be filling throughout the different sections. This section will contain generic information and explanatation to the survey. Next section 1 will have X, section 2 will have Y and sectiond 3 will have Z. </p>
+                    <p className="fs-5 text-body">The table below explains the different tiers, these tiers will help provide a confidence level on the output based on the input data.</p>
+                    <Table bordered>
+                        <tbody>
+                            <tr>
+                                <td className="bg-light" style={{ width: '100px' }}>Tier 01</td>
+                                <td>Data already gathered through CFP reports (Annually) - Can be entered directly.</td>
+                            </tr>
+                            <tr>
+                                <td className="bg-light" style={{ width: '100px' }}>Tier 02</td>
+                                <td>Data is not gathered, but can be estimated using secondary data units for consumption such as (Kwh/ L/h / KMs / ...)</td>
+                            </tr>
+                            <tr>
+                                <td className="bg-light" style={{ width: '100px' }}>Tier 03</td>
+                                <td>Data is not gathered, and secondary data units are not available, so basic assumptions will be made based on different elements such as (Number of buildings / Type of HVAC system / Number of users / ...)</td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </div>
+                <div className='container text-center' style={{ marginTop: '75px' }}>
+                    <p className="fs-5 text-body fst-italic">I consent to "---------------------------------------------------------------" </p>
                 </div>
                 <div className="col-lg-6">
                     <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -109,7 +139,29 @@ export const MultiStepForm = () => {
                                 </InputGroup>
                             </Form.Group> */}
                         </Row>
-
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="4">
+                                <Form.Label>Title</Form.Label>
+                                <Form.Control
+                                    name="Title"
+                                    required
+                                    type="text"
+                                    placeholder="Title"
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="8" controlId="validationCustom02">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control
+                                    name="Email"
+                                    required
+                                    type="email"
+                                    placeholder="Email"
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid"> Please provide a valid email. </Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
                         <Row className="mb-3">
                             <Form.Group as={Col} md="12" controlId="validationCustom03">
                                 <Form.Label>Institution <i className="fa fa-university" /></Form.Label>
@@ -167,17 +219,89 @@ export const MultiStepForm = () => {
             next();
         };
 
+
+        const [numBoxes, setNumBoxes] = useState(1);
+
+        const handleSelectChange = (e) => {
+            setNumBoxes(e.target.value);
+        };
+
         return (
-            <form className="form-group" onSubmit={handleSubmit}>
-                <label>Question 1</label>
-                <input type="text" name="question1" className="form-control" onChange={handleChange} />
-                <label>Question 2</label>
-                <input type="text" name="question2" className="form-control" onChange={handleChange} />
-                <label>Question 3</label>
-                <input type="text" name="question3" className="form-control" onChange={handleChange} />
-                <button type="button" className="btn btn-primary" onClick={previous}>Previous</button>
-                <button type="submit" className="btn btn-primary">Next</button>
-            </form>
+            <Container style={{ maxWidth: 1200, paddingTop: 40 }}>
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group controlId="question1" className="mb-4 border-bottom border-3 border-dark">
+                        <Form.Label>
+                            <Row>
+                                <Col sm={12}>
+                                    <OverlayTrigger
+                                        placement="right"
+                                        delay={{ show: 250, hide: 400 }}
+                                        overlay={
+                                            <Tooltip id={`tooltip-right`}>
+                                                Please add each campus name, location and area.
+                                            </Tooltip>}>
+                                        <p className="fs-5 fw-normal text-body">1. What are the Campus Boundaries?<i className="fa fa-info-circle" style={{paddingLeft:5}}/></p>
+                                    </OverlayTrigger>                                    
+                                    <p className="fs-6 fw-light text-body">(First Please Specify how many campuses do you operate?)</p>
+                                </Col>
+                                <Col sm={2}>
+                                    <Form.Select aria-label="Select number of text boxes" onChange={handleSelectChange}>
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                    </Form.Select>
+                                </Col>
+                            </Row>
+                        </Form.Label>
+                        {Array.from({ length: numBoxes }, (_, i) => (
+                            <Row key={i} style={{ paddingBottom: 4 }}>
+                                <Col sm={4}>
+                                    <Form.Control type="text" name={`question1-${i}-name`} placeholder="Campus Name" onChange={handleChange} />
+                                </Col>
+                                <Col sm={4}>
+                                    <Form.Control type="text" name={`question1-${i}-location`} placeholder="Campus Location" onChange={handleChange} />
+                                </Col>
+                                <Col sm={4}>
+                                    <Form.Control type="text" name={`question1-${i}-area`} placeholder="Campus Area" onChange={handleChange} />
+                                </Col>
+                            </Row>
+                        ))}
+                    </Form.Group>
+                    <Form.Group controlId="question2" className="mb-4 border-bottom border-3 border-dark">
+                        <Form.Label>
+                            <strong><em>2. Question 2</em></strong>
+                            <OverlayTrigger
+                                placement="right"
+                                delay={{ show: 250, hide: 400 }}
+                                overlay={renderTooltip}
+                            >
+                                <Button variant="secondary">?</Button>
+                            </OverlayTrigger>
+                        </Form.Label>
+                        <Form.Control type="text" name="question2" onChange={handleChange} />
+                    </Form.Group>
+                    <h2>Another Subtitle</h2>
+                    <Form.Group controlId="question3" className="mb-4 border-bottom border-3 border-dark">
+                        <Form.Label>
+                            <strong><em>3. Question 3</em></strong>
+                            <OverlayTrigger
+                                placement="right"
+                                delay={{ show: 250, hide: 400 }}
+                                overlay={renderTooltip}
+                            >
+                                <Button variant="secondary">?</Button>
+                            </OverlayTrigger>
+                        </Form.Label>
+                        <Form.Control type="text" name="question3" onChange={handleChange} />
+                    </Form.Group>
+                    <Row className="justify-content-end">
+                        <Button type="button" onClick={previous}>Previous</Button>
+                        <Button type="submit">Next</Button>
+                    </Row>
+                </Form>
+            </Container >
         );
     };
 
@@ -258,7 +382,7 @@ export const MultiStepForm = () => {
             <ProgressBar steps={steps} currentStep={currentStep} setCurrentStep={setCurrentStep} />
             <div className="row justify-content-center">
                 {currentStep === 0 ?
-                    (<Consent formData={formData} setFormData={setFormData} next={next} />) :
+                    (<Introduction formData={formData} setFormData={setFormData} next={next} />) :
                     currentStep === 1 ?
                         (<Phase1 formData={formData} setFormData={setFormData} next={next} previous={previous} />) :
                         currentStep === 2 ?

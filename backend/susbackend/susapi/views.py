@@ -31,8 +31,11 @@ class LoginAPIView(knox_views.LoginView):
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            print("Here")
             user = serializer.validated_data['user']
+            print("User: " + user)
             login(request, user)
+            print("Response: " +  response)
             response = super().post(request, format=None)
         else:
             return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

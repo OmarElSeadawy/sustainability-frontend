@@ -6,7 +6,7 @@ import { Login } from "./components/Login";
 import { Footer } from "./includes/Footer";
 import { Signup } from "./components/Signup";
 import { Tool } from "./components/Tool";
-import { MultiStepForm } from "./components/Survey";
+import SurveyComponent from "./surveycomponents/Survey";
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
         <Route path="/login" name="Login" element={<Login />} />
         <Route path="/signup" name="Signup" element={<Signup />} />
         <Route path="/tool" name="tool" element={<Tool />} />
-        <Route path="/survey" name="survey" element={<MultiStepForm/>} />
+        <Route path="/survey" name="survey" element={<SurveyComponent/>} />
       </Routes>
 
       <Footer />
