@@ -11,6 +11,9 @@ services:
       - 5678:5678
     volumes:
       - .:/app
+    depends_on:
+      nginx:
+        condition: service_started
     env_file:
       - .envs/dev.env
     entrypoint:
@@ -23,6 +26,3 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-    depends_on:
-      nginx:
-        condition: service_started
