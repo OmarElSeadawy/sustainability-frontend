@@ -54,7 +54,10 @@ class Register(Resource):
         except Exception as e:
             db.session.rollback()
             return make_response(
-                "Something Went Wrong. Please try again later...",
+                jsonify(
+                    {"error":"Something Went Wrong. Please try again later..."}
+                )
+                ,
                 HTTPStatus.BAD_REQUEST,
             )
 
@@ -92,7 +95,10 @@ class Register(Resource):
         except Exception as e:
             db.session.rollback()
             return make_response(
-                "Something Went Wrong. Please try again later...",
+                jsonify(
+                    {"error":"Something Went Wrong. Please try again later..."}
+                )
+                ,
                 HTTPStatus.BAD_REQUEST,
             )
 

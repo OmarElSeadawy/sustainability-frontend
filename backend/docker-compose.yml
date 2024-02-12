@@ -15,3 +15,14 @@ services:
       - .envs/dev.env
     entrypoint:
       - /app/run.sh
+
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      nginx:
+        condition: service_started
