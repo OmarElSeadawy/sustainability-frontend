@@ -1,0 +1,7 @@
+alias autofix=' sudo docker exec -t app python3 -m black .'
+alias install-autofix='sudo docker exec -t app pip3 install black==23.3.0'
+alias migrate='sudo docker exec -w /app/ app flask db migrate'
+alias upgrade='sudo docker exec -w /app/ app flask db upgrade'
+alias downgrade='export FLASK_APP=application && sudo docker exec -w /app/ app flask db downgrade'
+alias exporting='export FLASK_APP=application'
+alias db_init='sudo docker exec -w /app/ app flask db init'
