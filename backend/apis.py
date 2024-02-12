@@ -200,12 +200,9 @@ class CreateSurvey(Resource):
 
 class GetSurvey(Resource):
     def get(self) -> Response:
-        return jsonify({"dummy": "This is a successful request"})
-
-    def post(self) -> Response:
         username = request.headers.get("username")
         password = request.headers.get("password")
-        survey_name = request.json["survey_name"]
+        survey_name = request.args.get("survey_name")
 
         if not username or not password:
             return make_response(
@@ -244,6 +241,9 @@ class GetSurvey(Resource):
                 ),
                 HTTPStatus.BAD_REQUEST,
             )
+
+    def post(self) -> Response:
+        return jsonify({"dummy": "This is a successful request"})
 
 
 def create_public_json_file(bucket_name, file_key, data):
