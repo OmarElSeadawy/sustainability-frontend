@@ -1,7 +1,5 @@
 from http import HTTPStatus
-import secrets
-import requests
-import urllib
+import boto3
 from application import db
 from database_models import User, Survey
 from passlib.hash import sha256_crypt
@@ -14,9 +12,13 @@ from flask import (
     send_file,
     render_template,
 )
-from flask_api import status
 from flask_restful import Resource
-import os, sys
+import os
+import json
+
+aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+region_name = os.getenv("REGION_NAME")
 
 
 class Register(Resource):
@@ -26,13 +28,13 @@ class Register(Resource):
 
         if not username or not password:
             return make_response(
-                "Username and password are required",
+                "username and password are required",
                 HTTPStatus.BAD_REQUEST,
             )
 
         if User.query.filter_by(username=username).first():
             return make_response(
-                "User Already Exists",
+                "user already exists",
                 HTTPStatus.BAD_REQUEST,
             )
 
@@ -46,7 +48,7 @@ class Register(Resource):
             db.session.commit()
             return make_response(
                 jsonify(
-                    {"message": "User registered successfully", "user_id": new_user.id}
+                    {"message": "user registered successfully", "user_id": new_user.id}
                 ),
                 HTTPStatus.CREATED,
             )
@@ -54,10 +56,7 @@ class Register(Resource):
         except Exception as e:
             db.session.rollback()
             return make_response(
-                jsonify(
-                    {"error":"Something Went Wrong. Please try again later..."}
-                )
-                ,
+                jsonify({"error": "something went wrong. please try again later..."}),
                 HTTPStatus.BAD_REQUEST,
             )
 
@@ -67,13 +66,13 @@ class Register(Resource):
 
         if not username or not password:
             return make_response(
-                "Username and password are required",
+                "username and password are required",
                 HTTPStatus.BAD_REQUEST,
             )
 
         if User.query.filter_by(username=username).first():
             return make_response(
-                "User Already Exists",
+                "user already exists",
                 HTTPStatus.BAD_REQUEST,
             )
 
@@ -87,7 +86,7 @@ class Register(Resource):
             db.session.commit()
             return make_response(
                 jsonify(
-                    {"message": "User registered successfully", "user_id": new_user.id}
+                    {"message": "user registered successfully", "user_id": new_user.id}
                 ),
                 HTTPStatus.CREATED,
             )
@@ -95,10 +94,7 @@ class Register(Resource):
         except Exception as e:
             db.session.rollback()
             return make_response(
-                jsonify(
-                    {"error":"Something Went Wrong. Please try again later..."}
-                )
-                ,
+                jsonify({"error": "something went wrong. please try again later..."}),
                 HTTPStatus.BAD_REQUEST,
             )
 
@@ -117,10 +113,10 @@ class Login(Resource):
         user = User.query.filter_by(username=username).first()
 
         if user and sha256_crypt.verify(password, user.password):
-            return make_response(jsonify({"message": "Login successful"}), 200)
+            return make_response(jsonify({"message": "login successful"}), 200)
         else:
             return make_response(
-                jsonify({"error": "Invalid username or password"}), 401
+                jsonify({"error": "invalid username or password"}), 401
             )
 
     def post(self) -> Response:
@@ -136,10 +132,10 @@ class Login(Resource):
         user = User.query.filter_by(username=username).first()
 
         if user and sha256_crypt.verify(password, user.password):
-            return make_response(jsonify({"message": "Login successful"}), 200)
+            return make_response(jsonify({"message": "login successful"}), 200)
         else:
             return make_response(
-                jsonify({"error": "Invalid username or password"}), 401
+                jsonify({"error": "invalid username or password"}), 401
             )
 
 
@@ -148,4 +144,139 @@ class CreateSurvey(Resource):
         return jsonify({"dummy": "This is a successful request"})
 
     def post(self) -> Response:
+        username = request.headers.get("username")
+        password = request.headers.get("password")
+
+        if not username or not password:
+            return make_response(
+                "username and password are required",
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        survey_object = request.json
+        survey_name = survey_object["survey_name"]
+        survey_data = survey_object["survey_data"]
+        user_id = User.query.filter_by(username=username).first().id
+
+        if Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first():
+            return make_response(
+                jsonify(
+                    {
+                        "error": "a survey with the same name previously exists for this user"
+                    }
+                ),
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        # Connecting to AWS S3 Bucket
+        bucket_name = "sustainability-surveys"
+
+        try:
+            create_public_json_file(bucket_name, survey_name, survey_data)
+        except Exception as e:
+            return make_response(
+                jsonify({"error": "something went wrong. please try again later..."}),
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        new_survey = Survey(user_id=user_id, survey_name=survey_name)
+
+        try:
+            if not db.session.is_active:
+                db.session.begin()
+            db.session.add(new_survey)
+            db.session.commit()
+            return make_response(
+                jsonify({"message": "survey created successfully"}),
+                HTTPStatus.CREATED,
+            )
+        except Exception as e:
+            db.session.rollback()
+            return make_response(
+                jsonify({"error": "something went wrong. please try again later..."}),
+                HTTPStatus.BAD_REQUEST,
+            )
+
+
+class GetSurvey(Resource):
+    def get(self) -> Response:
         return jsonify({"dummy": "This is a successful request"})
+
+    def post(self) -> Response:
+        username = request.headers.get("username")
+        password = request.headers.get("password")
+        survey_name = request.json["survey_name"]
+
+        if not username or not password:
+            return make_response(
+                "username and password are required",
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        if not survey_name:
+            return make_response(
+                "please provide the name of the survey",
+                HTTPStatus.BAD_REQUEST,
+            )
+        user_id = User.query.filter_by(username=username).first().id
+
+        if Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first():
+            # Connecting to AWS S3 Bucket
+            bucket_name = "sustainability-surveys"
+            json_data = retrieve_json_file(
+                bucket_name=bucket_name, file_key=survey_name
+            )
+            if not json_data:
+                return make_response(
+                    jsonify(
+                        {
+                            "error": "the provided survey name doesnot exist for this user"
+                        }
+                    ),
+                    HTTPStatus.BAD_REQUEST,
+                )
+
+            return jsonify(json_data)
+        else:
+            return make_response(
+                jsonify(
+                    {"error": "the provided survey name doesnot exist for this user"}
+                ),
+                HTTPStatus.BAD_REQUEST,
+            )
+
+
+def create_public_json_file(bucket_name, file_key, data):
+    session = boto3.Session(
+        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name=os.getenv("REGION_NAME"),
+    )
+    s3 = session.client("s3")
+
+    json_data = json.dumps(data)
+
+    s3.put_object(
+        Bucket=bucket_name,
+        Key=file_key,
+        Body=json_data,
+        ContentType="application/json",
+    )
+
+
+def retrieve_json_file(bucket_name, file_key):
+    session = boto3.Session(
+        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name=os.getenv("REGION_NAME"),
+    )
+    s3 = session.client("s3")
+
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=file_key)
+        # Load the JSON data from the response
+        json_data = json.loads(response["Body"].read().decode("utf-8"))
+        return json_data
+    except Exception as e:
+        print(f"Error retrieving JSON file: {e}")
+        return None

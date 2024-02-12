@@ -12,4 +12,5 @@ class User(db.Model):
 class Survey(db.Model):
     __tablename__ = "surveys"
     id = db.Column(db.Integer, primary_key=True)
+    survey_name = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)

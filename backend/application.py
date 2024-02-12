@@ -35,7 +35,7 @@ db = SQLAlchemy(
 migrate = Migrate(app, db, compare_type=True)
 
 
-from apis import Login, Register, CreateSurvey
+from apis import Login, Register, CreateSurvey, GetSurvey
 
 bcrypt = Bcrypt(app)
 babel = Babel(app)
@@ -46,5 +46,6 @@ api = Api(bp_api)
 api.add_resource(Login, "/login/")
 api.add_resource(Register, "/register/")
 api.add_resource(CreateSurvey, "/create_survey/")
+api.add_resource(GetSurvey, "/get_survey/")
 
 app.register_blueprint(bp_api, url_prefix="/api")
