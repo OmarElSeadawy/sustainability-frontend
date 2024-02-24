@@ -43,8 +43,7 @@ bcrypt = Bcrypt(app)
 babel = Babel(app)
 bp_api = Blueprint("api", __name__)
 api = Api(bp_api)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
-
+CORS(app, resources={r"/api/*": {"origins": "*", "headers": "Content-Type, X-Auth-Token, Username, Password"}})
 
 api.add_resource(Login, "/login/")
 api.add_resource(Register, "/register/")
