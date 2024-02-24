@@ -27,6 +27,7 @@ app.config["DEBUG"] = False
 app.config["TESTING"] = False
 app.config["CSRF_ENABLED"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['CORS_FOLLOW_REDIRECTS'] = True
 
 db = SQLAlchemy(
     app,
@@ -38,11 +39,11 @@ migrate = Migrate(app, db, compare_type=True)
 
 from apis import Login, Register, CreateSurvey, GetSurvey
 
-CORS(app)
 bcrypt = Bcrypt(app)
 babel = Babel(app)
 bp_api = Blueprint("api", __name__)
 api = Api(bp_api)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
 api.add_resource(Login, "/login/")
