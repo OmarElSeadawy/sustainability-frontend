@@ -255,6 +255,10 @@ cython_debug/
 .scripts/
 #Folders
 images/
+bin/
+lib/
+include/
+lib64/
 
 # files
 app/all_country_merchant_categorizer/txn_records.csv

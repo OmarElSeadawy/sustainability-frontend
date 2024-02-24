@@ -1,39 +1,28 @@
-import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useContext } from 'react';
+import AuthContext from '../Authentication/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
 
+    const { login } = useContext(AuthContext);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+
     const navigate = useNavigate();
-    const location = useLocation();
-    const BASE_URL = 'http://127.0.0.1:8000/auth';
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        var bodyFormData = new FormData();
-        bodyFormData.append("email", e.target.email.value);
-        bodyFormData.append("password", e.target.password.value);
-        const from = location.state?.from || '/home';
-        
-        axios({
-            method: "post",
-            url: `${BASE_URL}/login/`,
-            data: bodyFormData,
-            headers: { "Content-Type": "multipart/form-data" },
-            withCredentials: true,
-        })
-            .then(function (response) {
-                // Handle successful login here, e.g. storing the user data or token
-                console.log(response);
-                localStorage.setItem('authToken', response.data.token);
-                // After successful login, redirect the user back to the page they were trying to access
-                navigate(from);
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log("Logging in Login.js");
+        login(username, password)
+            .then(() => {
+                navigate('/');
             })
-            .catch(function (response) {
-                // Handle error here
-                console.log(response);
+            .catch(error => {
+                console.error(error);
+                setError('Invalid username or password');
             });
-    }
-
+    };
 
     return (
         <div className="container" style={{ paddingTop: '100px' }}>
@@ -43,14 +32,15 @@ export const Login = () => {
                         <div className="card-body">
                             <form className="login-form" onSubmit={handleSubmit}>
                                 <div className="form-floating mb-3">
-                                    <input type="text" id="email" name="email" className="form-control" placeholder="Email" required />
-                                    <label htmlFor="email">Email</label>
+                                    <input type="text" id="username" name="username" className="form-control" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)}  required />
+                                    <label htmlFor="username">Username</label>
                                 </div>
                                 <div className="form-floating mb-3">
-                                    <input type="password" id="password" name="password" className="form-control" placeholder="Password" required />
+                                    <input type="password" id="password" name="password" className="form-control" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
                                     <label htmlFor="password">Password</label>
                                 </div>
                                 <button type="submit" className="btn btn-primary">Login</button>
+                                {error && <p color='red'>{error}</p>}
                                 <p className="message mt-3">Not registered? <a href="/signup">Create an account</a></p>
                             </form>
                         </div>
