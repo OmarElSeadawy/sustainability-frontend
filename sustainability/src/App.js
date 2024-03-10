@@ -6,23 +6,25 @@ import { Login } from "./components/Login";
 import { Footer } from "./includes/Footer";
 import { Signup } from "./components/Signup";
 import { Tool } from "./components/Tool";
+import { SurveyPage } from "./components/SurveyPage";
 import AuthProvider from "./Authentication/AuthProvider";
 import SurveyComponent from "./surveycomponents/Survey";
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-        <AuthProvider>
+      <AuthProvider>
+        <Navbar />
           <Routes>
             <Route exact path="/" name="Home" index element={<Home />} />
             <Route path="/login" name="Login" element={<Login />} />
             <Route path="/signup" name="Signup" element={<Signup />} />
             <Route path="/tool" name="tool" element={<Tool />} />
             <Route path="/survey" name="survey" element={<SurveyComponent/>} />
+            <Route path="/surveypage" name="surveypage"element={<SurveyPage/>} />
           </Routes>
-        </AuthProvider>
-      <Footer />
+        <Footer />
+      </AuthProvider>
     </BrowserRouter>
 
   );

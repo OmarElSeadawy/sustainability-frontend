@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
 
-    const { login } = useContext(AuthContext);
+    const { login, isLoggedin, user } = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -17,6 +17,8 @@ export const Login = () => {
         login(username, password)
             .then(() => {
                 navigate('/');
+                console.log(isLoggedin);
+                console.log(user);
             })
             .catch(error => {
                 console.error(error);

@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { HashLink } from 'react-router-hash-link';
+import AuthContext from "../Authentication/AuthContext";
+import React, { useContext } from 'react';
 
 export const Navbar = () => {
+    const { isLoggedIn, user, logout } = useContext(AuthContext); // Use the AuthContext
+
     return (
         <div className="container-fluid bg-white sticky-top">
             <div className="container">
@@ -19,13 +23,22 @@ export const Navbar = () => {
                             <Link to="/tool" className="nav-item nav-link" onClick={() => window.scrollTo(0, 0)}>Tool</Link>
                             <HashLink smooth to="/#blog" className="nav-item nav-link">Article</HashLink>
                             <HashLink smooth to="/#contact" className="nav-item nav-link">Contact</HashLink>
-                            <div className="nav-item dropdown">
-                                <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Login</Link>
-                                <div className="dropdown-menu bg-light rounded-0 m-0">
-                                    <Link to="/login" className="dropdown-item">Login</Link>
-                                    <Link to="/signup" className="dropdown-item">Signup</Link>
+                            {isLoggedIn  && user ? (
+                                <div className="nav-item dropdown">
+                                    <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">{user.name}</Link>
+                                    <div className="dropdown-menu bg-light rounded-0 m-0">
+                                        <Link to="#" className="dropdown-item" onClick={logout}>Logout</Link>
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="nav-item dropdown">
+                                    <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Login</Link>
+                                    <div className="dropdown-menu bg-light rounded-0 m-0">
+                                        <Link to="/login" className="dropdown-item">Login</Link>
+                                        <Link to="/signup" className="dropdown-item">Signup</Link>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div className="border-start ps-4 d-none d-lg-block">
                             <button type="button" className="btn btn-sm p-0"><i className="fa fa-search" /></button>

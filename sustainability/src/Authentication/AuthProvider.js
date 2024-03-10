@@ -28,6 +28,7 @@ const AuthProvider = ({ children }) => {
 
             if (response.status === 200) {
                 setIsLoggedIn(true);
+                setUser(username);
                 localStorage.setItem('isLoggedIn', 'true');
                 return Promise.resolve(response);
             } else {
@@ -41,11 +42,14 @@ const AuthProvider = ({ children }) => {
 
     const register = async (username, password) => {
         try {
-            const response = await axios.post('http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/register', {
-                username,
-                password
+            const response = await axios({
+                method: 'post',
+                url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/register',
+                headers: {
+                    'username': username,
+                    'password': password
+                }
             });
-            setUser(response.data.user);
             return response;
         } catch (error) {
             throw error;

@@ -245,6 +245,107 @@ class GetSurvey(Resource):
     def post(self) -> Response:
         return jsonify({"dummy": "This is a successful request"})
 
+class GetAllSurveys(Resource):
+    def get(self) -> Response:
+        username = request.headers.get("username")
+        password = request.headers.get("password")
+
+        if not username or not password:
+            return make_response(
+                "username and password are required",
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        user_id = User.query.filter_by(username=username).first().id
+
+        surveys = Survey.query.filter_by(user_id=user_id).all()
+        survey_names = [survey.survey_name for survey in surveys]
+
+        return jsonify({'survey_names': survey_names}), HTTPStatus.OK
+        
+    def post(self) -> Response:
+        return jsonify({"dummy": "This is a successful request"})
+
+
+class UpdateSurvey(Resource):
+    def put(self) -> Response:
+        username = request.headers.get("username")
+        password = request.headers.get("password")
+        survey_name = request.args.get("survey_name")
+
+        if not username or not password:
+            return make_response(
+                "username and password are required",
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        survey_object = request.json
+        survey_data = survey_object["survey_data"]
+
+        user_id = User.query.filter_by(username=username).first().id
+
+        if Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first():
+            return make_response(
+                jsonify(
+                    {
+                        "error": "no survey with the given name exists for this user"
+                    }
+                ),
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        # Connecting to AWS S3 Bucket
+        bucket_name = "sustainability-surveys"
+
+        try:
+            update_public_json_file(bucket_name, survey_name, survey_data)  # Assuming you have a function to update the file
+        except Exception as e:
+            return make_response(
+                jsonify({"error": "something went wrong. please try again later..."}),
+                HTTPStatus.BAD_REQUEST,
+            )
+
+class DeleteSurvey(Resource):
+    def delete(self) -> Response:
+        username = request.headers.get("username")
+        password = request.headers.get("password")
+
+        if not username or not password:
+            return make_response(
+                "username and password are required",
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        survey_name = request.json["survey_name"]
+        user_id = User.query.filter_by(username=username).first().id
+
+        survey = Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first()
+
+        if not survey:
+            return make_response(
+                jsonify(
+                    {
+                        "error": "no survey with the given name exists for this user"
+                    }
+                ),
+                HTTPStatus.BAD_REQUEST,
+            )
+
+        try:
+            if not db.session.is_active:
+                db.session.begin()
+            db.session.delete(survey)
+            db.session.commit()
+            return make_response(
+                jsonify({"message": "survey deleted successfully"}),
+                HTTPStatus.OK,
+            )
+        except Exception as e:
+            db.session.rollback()
+            return make_response(
+                jsonify({"error": "something went wrong. please try again later..."}),
+                HTTPStatus.BAD_REQUEST,
+            )
 
 def create_public_json_file(bucket_name, file_key, data):
     session = boto3.Session(
@@ -280,3 +381,20 @@ def retrieve_json_file(bucket_name, file_key):
     except Exception as e:
         print(f"Error retrieving JSON file: {e}")
         return None
+
+def update_public_json_file(bucket_name, file_key, data):
+    session = boto3.Session(
+        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name=os.getenv("REGION_NAME"),
+    )
+    s3 = session.client("s3")
+
+    json_data = json.dumps(data)
+
+    s3.put_object(
+        Bucket=bucket_name,
+        Key=file_key,
+        Body=json_data,
+        ContentType="application/json",
+    )

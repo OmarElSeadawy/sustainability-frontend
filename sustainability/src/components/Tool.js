@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 export const Tool = () => {
     let navigate = useNavigate();
     const routeChange = () => {
-        let path = '/survey';
+        let path = '/surveypage';
         window.scrollTo({ top: 0, behavior: 'smooth' });
         navigate(path);
     }
@@ -16,7 +16,7 @@ export const Tool = () => {
                     <nav aria-label="breadcrumb animated slideInDown">
                         <ol className="breadcrumb justify-content-center mb-0">
                             <li className="breadcrumb-item"><a href="/">Home</a></li>
-                            <li className="breadcrumb-item text-dark" aria-current="page"><a href="#">Tool</a></li>
+                            <li className="breadcrumb-item text-dark" aria-current="page">Tool</li>
                         </ol>
                     </nav>
                 </div>
