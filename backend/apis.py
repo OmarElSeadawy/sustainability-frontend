@@ -12,6 +12,8 @@ from flask import (
     send_file,
     render_template,
 )
+import logging
+
 from flask_restful import Resource
 import os
 import json
@@ -247,10 +249,11 @@ class GetSurvey(Resource):
 
 class GetAllSurveys(Resource):
     def get(self) -> Response:
+        logging.info("Inside get all surveys")
         username = request.headers.get("username")
         password = request.headers.get("password")
 
-        print(username, password)
+        logging.info(username, password)
         if not username or not password:
             return make_response(
                 jsonify(
@@ -260,12 +263,12 @@ class GetAllSurveys(Resource):
             )
         
         user_id = User.query.filter_by(username=username).first().id
-        print(user_id)
+        logging.info(user_id)
         surveys = Survey.query.filter_by(user_id=user_id).all()
         survey_names = [survey.survey_name for survey in surveys]
-        print(surveys)
-        print(survey_names)
-        return jsonify({'survey_names': survey_names}), HTTPStatus.OK
+        logging.info(surveys)
+        logging.info(survey_names)
+        return jsonify({'survey_names': survey_names})
         
     def post(self) -> Response:
         return jsonify({"dummy": "This is a successful request"})
