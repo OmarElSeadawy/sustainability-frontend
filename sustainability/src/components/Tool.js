@@ -1,8 +1,16 @@
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../Authentication/AuthContext"; // Import your AuthContext
 
 export const Tool = () => {
     let navigate = useNavigate();
+    const { isLoggedIn } = useContext(AuthContext); // Get the authentication state
+
     const routeChange = () => {
+        if (!isLoggedIn) {
+            navigate('/login');
+            return;
+        }
         let path = '/surveypage';
         window.scrollTo({ top: 0, behavior: 'smooth' });
         navigate(path);

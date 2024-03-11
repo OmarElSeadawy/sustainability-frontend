@@ -2,14 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AuthContext from './AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const AuthProvider = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
+    const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const savedLoginState = localStorage.getItem('isLoggedIn');
-        setIsLoggedIn(savedLoginState === 'true');
     }, []);
 
     const login = async (username, password) => {
@@ -30,6 +33,7 @@ const AuthProvider = ({ children }) => {
                 setIsLoggedIn(true);
                 setUser(username);
                 localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('user', JSON.stringify(username)); // Store user data in localStorage
                 return Promise.resolve(response);
             } else {
                 return Promise.reject(new Error('Login failed'));
@@ -59,6 +63,8 @@ const AuthProvider = ({ children }) => {
     const logout = () => {
         setIsLoggedIn(false);
         localStorage.setItem('isLoggedIn', 'false');
+        localStorage.removeItem('user'); 
+        navigate('/login'); 
     };
 
     return (

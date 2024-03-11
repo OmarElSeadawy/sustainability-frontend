@@ -1,14 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const checkIfUserIsLoggedIn = () => {
-  const token = localStorage.getItem('authToken');
-  return token !== null;
-};
+import AuthContext from './AuthContext';
+import { useContext } from 'react';
 
 const AuthenticatedRoute = ({ component: Component, ...rest }) => {
   const navigate = useNavigate();
-  const isLoggedIn = checkIfUserIsLoggedIn(); // Replace this with your actual authentication check
+  const { isLoggedIn } = useContext(AuthContext);
 
   React.useEffect(() => {
     if (!isLoggedIn) {

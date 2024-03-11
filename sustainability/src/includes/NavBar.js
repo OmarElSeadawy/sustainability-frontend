@@ -4,8 +4,12 @@ import AuthContext from "../Authentication/AuthContext";
 import React, { useContext } from 'react';
 
 export const Navbar = () => {
-    const { isLoggedIn, user, logout } = useContext(AuthContext); // Use the AuthContext
+    const { isLoggedIn, user, logout } = useContext(AuthContext);
 
+    const handleLogout = () => {
+        logout();
+      };
+    
     return (
         <div className="container-fluid bg-white sticky-top">
             <div className="container">
@@ -27,7 +31,7 @@ export const Navbar = () => {
                                 <div className="nav-item dropdown">
                                     <Link to="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">{user.name}</Link>
                                     <div className="dropdown-menu bg-light rounded-0 m-0">
-                                        <Link to="#" className="dropdown-item" onClick={logout}>Logout</Link>
+                                        <Link to="#" className="dropdown-item" onClick={handleLogout}>Logout</Link>
                                     </div>
                                 </div>
                             ) : (
