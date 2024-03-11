@@ -250,17 +250,21 @@ class GetAllSurveys(Resource):
         username = request.headers.get("username")
         password = request.headers.get("password")
 
+        print(username, password)
         if not username or not password:
             return make_response(
-                "username and password are required",
+                jsonify(
+                    "username and password are required",
+                ),
                 HTTPStatus.BAD_REQUEST,
             )
-
+        
         user_id = User.query.filter_by(username=username).first().id
-
+        print(user_id)
         surveys = Survey.query.filter_by(user_id=user_id).all()
         survey_names = [survey.survey_name for survey in surveys]
-
+        print(surveys)
+        print(survey_names)
         return jsonify({'survey_names': survey_names}), HTTPStatus.OK
         
     def post(self) -> Response:
@@ -275,7 +279,9 @@ class UpdateSurvey(Resource):
 
         if not username or not password:
             return make_response(
-                "username and password are required",
+                jsonify(
+                    "username and password are required",
+                ),
                 HTTPStatus.BAD_REQUEST,
             )
 
@@ -312,7 +318,9 @@ class DeleteSurvey(Resource):
 
         if not username or not password:
             return make_response(
-                "username and password are required",
+                jsonify(
+                    "username and password are required",
+                ),
                 HTTPStatus.BAD_REQUEST,
             )
 
