@@ -1,19 +1,40 @@
 import AuthContext from '../Authentication/AuthContext';
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export const SurveyPage = () => {
   const { user } = useContext(AuthContext);
   const [surveys, setSurveys] = useState([]);
   let navigate = useNavigate();
 
-  useEffect((loadSurveys) => {
-    //loadSurveys();
+  useEffect(() => {
+    loadSurveys();
   }, []);
 
   const loadSurveys = async () => {
-    //const response = await axios.get('/api/surveys', { params: { userId: user.id } });
-    //setSurveys(response.data);
+    try {
+      console.log(`Loading surveys for user: ${user}`);
+      const response = await axios({
+        method: 'get',
+        url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/get_all_surveys',
+        headers: {
+          'username': user.username,
+          'password': user.password
+        }
+      });
+  
+      if (response.status === 200) {
+        setSurveys(response.data.survey_names);
+        console.log(response.data.survey_names)
+        return Promise.resolve(response);
+      } else {
+        return Promise.reject(new Error('Failed to load surveys'));
+      }
+    } catch (error) {
+      console.error(error);
+      return Promise.reject(error);
+    }
   };
 
   const createSurvey = async () => {
@@ -46,9 +67,9 @@ export const SurveyPage = () => {
         <div className="container py-5">
           <div className="section-title text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style={{ maxWidth: '900px' }}>
             <p className="fs-3 fw-medium fst-italic text-primary">Your Surveys</p>
-            {surveys.map(survey => (
-                <div key={survey.id} className="fs-4 text-body d-flex justify-content-between align-items-center">
-                    <span>{survey.name}</span>
+            {surveys.map((survey, index) => (
+                <div key={index} className="fs-4 text-body d-flex justify-content-between align-items-center">
+                    <span>{survey}</span>
                     <div>
                     <button onClick={() => editSurvey(survey.id)} className="btn btn-primary rounded-pill py-2 px-3 animated zoomIn">Edit</button>
                     <button onClick={() => deleteSurvey(survey.id)} className="btn btn-primary rounded-pill py-2 px-3 animated zoomIn">Delete</button>

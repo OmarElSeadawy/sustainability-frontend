@@ -27,13 +27,12 @@ const AuthProvider = ({ children }) => {
                     'password': password
                 }
             });
-    
 
             if (response.status === 200) {
                 setIsLoggedIn(true);
-                setUser(username);
+                setUser({ username, password });
                 localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('user', JSON.stringify(username)); // Store user data in localStorage
+                localStorage.setItem('user', JSON.stringify({ username, password })); 
                 return Promise.resolve(response);
             } else {
                 return Promise.reject(new Error('Login failed'));
