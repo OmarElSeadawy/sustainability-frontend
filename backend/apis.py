@@ -342,11 +342,14 @@ class DeleteSurvey(Resource):
                 HTTPStatus.BAD_REQUEST,
             )
 
+# Connecting to AWS S3 Bucket
+        bucket_name = "sustainability-surveys"
         try:
             if not db.session.is_active:
                 db.session.begin()
             db.session.delete(survey)
             db.session.commit()
+            delete_json_file(bucket_name, survey_name)  
             return make_response(
                 jsonify({"message": "survey deleted successfully"}),
                 HTTPStatus.OK,
@@ -408,4 +411,17 @@ def update_public_json_file(bucket_name, file_key, data):
         Key=file_key,
         Body=json_data,
         ContentType="application/json",
+    )
+
+def delete_json_file(bucket_name, file_key):
+    session = boto3.Session(
+        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name=os.getenv("REGION_NAME"),
+    )
+    s3 = session.client("s3")
+
+    s3.delete_object(
+        Bucket=bucket_name,
+        Key=file_key
     )

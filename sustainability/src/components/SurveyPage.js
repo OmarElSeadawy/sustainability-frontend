@@ -37,14 +37,38 @@ export const SurveyPage = () => {
     }
   };
 
-  const createSurvey = async () => {
-    const surveyName = prompt("Please enter the survey name:");
-    if (surveyName) {
-      const newSurvey = { name: surveyName, userId: user.id, json: {} };
-      setSurveys(prevSurveys => [...prevSurveys, newSurvey]);
-  
-      // Save the new survey to the database
-      //await axios.post('/api/surveys', newSurvey);
+  const createSurvey = async (surveyData) => {
+    const surveyName = prompt('Please enter the survey name');
+
+    if (surveyName === null || surveyName === '') {
+        console.log('No survey name entered');
+        return;
+    }
+
+    try {
+        console.log(`Creating survey: ${surveyName}`);
+        const response = await axios({
+            method: 'post',
+            url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/create_survey',
+            headers: {
+                'username': user.username,
+                'password': user.password
+            },
+            data: {
+                survey_name: surveyName,
+                survey_data: surveyData
+            }
+        });
+
+        if (response.status === 201) {
+            console.log('Survey created successfully');
+            return Promise.resolve(response);
+        } else {
+            return Promise.reject(new Error('Failed to create survey'));
+        }
+    } catch (error) {
+        console.error(error);
+        return Promise.reject(error);
     }
   };
 
