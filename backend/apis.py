@@ -318,7 +318,7 @@ class DeleteSurvey(Resource):
     def post(self) -> Response:
         username = request.headers.get("username")
         password = request.headers.get("password")
-
+        print("auth ok")
         if not username or not password:
             return make_response(
                 jsonify(
@@ -326,12 +326,12 @@ class DeleteSurvey(Resource):
                 ),
                 HTTPStatus.BAD_REQUEST,
             )
-
+        
         survey_name = request.json["survey_name"]
         user_id = User.query.filter_by(username=username).first().id
 
         survey = Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first()
-
+        print(survey_name,user_id,survey)
         if not survey:
             return make_response(
                 jsonify(
@@ -342,14 +342,17 @@ class DeleteSurvey(Resource):
                 HTTPStatus.BAD_REQUEST,
             )
 
-# Connecting to AWS S3 Bucket
+        print("S3bucket connection")
+        # Connecting to AWS S3 Bucket
         bucket_name = "sustainability-surveys"
         try:
             if not db.session.is_active:
                 db.session.begin()
             db.session.delete(survey)
             db.session.commit()
+            print("Db deletion")
             delete_json_file(bucket_name, survey_name)  
+            print("json deletion")
             return make_response(
                 jsonify({"message": "survey deleted successfully"}),
                 HTTPStatus.OK,
