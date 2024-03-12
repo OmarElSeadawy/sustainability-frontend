@@ -14,3 +14,4 @@ class Survey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     survey_name = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    draft = db.Column(db.Boolean, default=True, nullable=False)
