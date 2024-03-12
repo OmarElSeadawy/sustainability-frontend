@@ -318,7 +318,7 @@ class DeleteSurvey(Resource):
     def post(self) -> Response:
         username = request.headers.get("username")
         password = request.headers.get("password")
-        print("auth ok")
+        logging.info("auth ok")
         if not username or not password:
             return make_response(
                 jsonify(
@@ -331,7 +331,7 @@ class DeleteSurvey(Resource):
         user_id = User.query.filter_by(username=username).first().id
 
         survey = Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first()
-        print(survey_name,user_id,survey)
+        logging.info(survey_name,user_id,survey)
         if not survey:
             return make_response(
                 jsonify(
@@ -342,7 +342,7 @@ class DeleteSurvey(Resource):
                 HTTPStatus.BAD_REQUEST,
             )
 
-        print("S3bucket connection")
+        logging.info("S3bucket connection")
         # Connecting to AWS S3 Bucket
         bucket_name = "sustainability-surveys"
         try:
@@ -350,9 +350,9 @@ class DeleteSurvey(Resource):
                 db.session.begin()
             db.session.delete(survey)
             db.session.commit()
-            print("Db deletion")
+            logging.info("Db deletion")
             delete_json_file(bucket_name, survey_name)  
-            print("json deletion")
+            logging.info("json deletion")
             return make_response(
                 jsonify({"message": "survey deleted successfully"}),
                 HTTPStatus.OK,
@@ -409,12 +409,20 @@ def update_public_json_file(bucket_name, file_key, data):
 
     json_data = json.dumps(data)
 
-    s3.put_object(
-        Bucket=bucket_name,
-        Key=file_key,
-        Body=json_data,
-        ContentType="application/json",
-    )
+    try:
+        response = s3.put_object(
+            Bucket=bucket_name,
+            Key=file_key,
+            Body=json_data,
+            ContentType="application/json",
+        )
+        # Load the JSON data from the response
+        json_data = json.loads(response["Body"].read().decode("utf-8"))
+        return json_data
+    except Exception as e:
+        print(f"Error retrieving JSON file: {e}")
+        return None
+    
 
 def delete_json_file(bucket_name, file_key):
     session = boto3.Session(
@@ -422,9 +430,18 @@ def delete_json_file(bucket_name, file_key):
         aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
         region_name=os.getenv("REGION_NAME"),
     )
+    logging.info(session)
     s3 = session.client("s3")
-
-    s3.delete_object(
-        Bucket=bucket_name,
-        Key=file_key
-    )
+    logging.info(s3)
+    
+    try:
+        response = s3.delete_object(
+            Bucket=bucket_name,
+            Key=file_key
+        )
+        # Load the JSON data from the response
+        json_data = json.loads(response["Body"].read().decode("utf-8"))
+        return json_data
+    except Exception as e:
+        print(f"Error retrieving JSON file: {e}")
+        return None
