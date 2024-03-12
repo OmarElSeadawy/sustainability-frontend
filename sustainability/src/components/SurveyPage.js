@@ -37,9 +37,9 @@ export const SurveyPage = () => {
     }
   };
 
-  const createSurvey = async (surveyData) => {
+  const createSurvey = async () => {
     const surveyName = prompt('Please enter the survey name');
-
+    const surveyData = "testdatawhatever";
     if (surveyName === null || surveyName === '') {
         console.log('No survey name entered');
         return;
@@ -62,6 +62,7 @@ export const SurveyPage = () => {
 
         if (response.status === 201) {
             console.log('Survey created successfully');
+            window.location.reload();
             return Promise.resolve(response);
         } else {
             return Promise.reject(new Error('Failed to create survey'));
@@ -72,10 +73,33 @@ export const SurveyPage = () => {
     }
   };
 
-  const deleteSurvey = async (surveyId) => {
-    //await axios.delete(`/api/surveys/${surveyId}`);
-    //loadSurveys();
-  };
+  const deleteSurvey = async (surveyName) => {
+    try {
+        console.log(`Deleting survey: ${surveyName}`);
+        const response = await axios({
+            method: 'post',
+            url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/delete_survey',
+            headers: {
+                'username': user.username,
+                'password': user.password
+            },
+            data: {
+                'survey_name': surveyName
+            }
+        });
+
+        if (response.status === 200) {
+            console.log('Survey deleted successfully');
+            window.location.reload();
+            return Promise.resolve(response);
+        } else {
+            return Promise.reject(new Error('Failed to delete survey'));
+        }
+    } catch (error) {
+        console.error(error);
+        return Promise.reject(error);
+    }
+};
 
   const editSurvey = (surveyId) => {
     const surveyToEdit = surveys.find(survey => survey.id === surveyId);
@@ -96,7 +120,7 @@ export const SurveyPage = () => {
                     <span>{survey}</span>
                     <div>
                     <button onClick={() => editSurvey(survey.id)} className="btn btn-primary rounded-pill py-2 px-3 animated zoomIn">Edit</button>
-                    <button onClick={() => deleteSurvey(survey.id)} className="btn btn-primary rounded-pill py-2 px-3 animated zoomIn">Delete</button>
+                    <button onClick={() => deleteSurvey(survey)} className="btn btn-primary rounded-pill py-2 px-3 animated zoomIn">Delete</button>
                     </div>
                 </div>
                 ))}

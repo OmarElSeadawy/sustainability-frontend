@@ -275,7 +275,7 @@ class GetAllSurveys(Resource):
 
 
 class UpdateSurvey(Resource):
-    def put(self) -> Response:
+    def post(self) -> Response:
         username = request.headers.get("username")
         password = request.headers.get("password")
         survey_name = request.args.get("survey_name")
@@ -315,7 +315,7 @@ class UpdateSurvey(Resource):
             )
 
 class DeleteSurvey(Resource):
-    def delete(self) -> Response:
+    def post(self) -> Response:
         username = request.headers.get("username")
         password = request.headers.get("password")
 
