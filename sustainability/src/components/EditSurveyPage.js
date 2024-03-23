@@ -18,17 +18,16 @@ export const EditSurvey = () => {
   const storageItemKey = `survey-${surveyName}`;
 
   function saveSurveyData(survey) {
+    console.log("SAVING");
     const data = survey.data;
     data.pageNo = survey.currentPageNo;
     window.localStorage.setItem(storageItemKey, JSON.stringify(data));
   }
 
-  survey.onValueChanged.add(saveSurveyData);
-  survey.onCurrentPageChanged.add(saveSurveyData);
-  
-
   const saveDataToApi = async () => {
+    console.log("Updating DB");
     const data = window.localStorage.getItem(storageItemKey);
+    console.log("DATA : ", data)
     if (data) {
       try {
         console.log(`Updating survey: ${surveyName}`);
@@ -44,7 +43,7 @@ export const EditSurvey = () => {
                 survey_data: data
             }
         });
-
+        console.log("UPDATE API CALLED");
         if (response.status === 201) {
             console.log('Survey Updated successfully');
             return Promise.resolve(response);
@@ -83,11 +82,6 @@ export const EditSurvey = () => {
     }
   };
 
-  const handleBeforeUnload = (event) => {
-    event.preventDefault();
-    saveDataToApi();
-  };
-
   useEffect(() => {
     GetSurvey(surveyName).then((response) => {
       const survey = new Model(json);
@@ -96,11 +90,21 @@ export const EditSurvey = () => {
       if(data.pageNo) {
         survey.currentPageNo = data.pageNo;
       }
+      survey.addNavigationItem({
+        id: "surv-save-page",
+        title: "Save",
+        action: () => {
+          saveDataToApi();
+        }
+      })
       survey.applyTheme(themeJson);
+      survey.onValueChanged.add(saveSurveyData);
+      survey.onCurrentPageChanged.add(saveSurveyData);
       setSurvey(survey);
+    }).catch((error) => {
+      console.error('Failed to fetch survey data:', error);
     });
-  
-    window.addEventListener('beforeunload', handleBeforeUnload);  
+
   }, [surveyName]);
 
 

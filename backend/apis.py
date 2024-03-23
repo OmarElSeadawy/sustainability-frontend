@@ -278,6 +278,7 @@ class UpdateSurvey(Resource):
     def post(self) -> Response:
         username = request.headers.get("username")
         password = request.headers.get("password")
+        logging.info("auth ok")
 
         if not username or not password:
             return make_response(
@@ -290,14 +291,18 @@ class UpdateSurvey(Resource):
         survey_object = request.json
         survey_name = survey_object["survey_name"]
         survey_data = survey_object["survey_data"]
+        logging.info("survey object read")
+        logging.info(survey_object)
+
 
         user_id = User.query.filter_by(username=username).first().id
+        logging.info(user_id)
 
         if Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first():
             return make_response(
                 jsonify(
                     {
-                        "error": "no survey with the given name exists for this user"
+                        "error": "Cannot find survey"
                     }
                 ),
                 HTTPStatus.BAD_REQUEST,
@@ -305,7 +310,7 @@ class UpdateSurvey(Resource):
 
         # Connecting to AWS S3 Bucket
         bucket_name = "sustainability-surveys"
-
+        logging.info("REACHING BUCKET INIT");
         try:
             update_public_json_file(bucket_name, survey_name, survey_data)
         except Exception as e:

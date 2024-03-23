@@ -106,6 +106,7 @@ export const SurveyPage = () => {
   const editSurvey = (surveyName) => {
     console.log("TO EDIT:", surveyName);
     if (surveyName) {
+      console.log("Navigating to Edit");
       navigate(`/edit-survey/${surveyName}`);
     }
   };
