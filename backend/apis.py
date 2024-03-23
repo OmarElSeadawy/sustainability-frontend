@@ -316,6 +316,9 @@ class UpdateSurvey(Resource):
         logging.info("REACHING BUCKET INIT");
         try:
             update_public_json_file(bucket_name, survey_name, survey_data)
+            return make_response(
+                jsonify({"success": "Bucket Updated"})
+            )
         except Exception as e:
             return make_response(
                 jsonify({"error": "something went wrong. please try again later..."}),

@@ -44,7 +44,7 @@ export const EditSurvey = () => {
             }
         });
         console.log("UPDATE API CALLED");
-        if (response.status === 201) {
+        if (response.status === 200) {
             console.log('Survey Updated successfully');
             return Promise.resolve(response);
         } else {
