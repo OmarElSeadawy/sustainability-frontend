@@ -297,7 +297,7 @@ class UpdateSurvey(Resource):
 
         user_id = User.query.filter_by(username=username).first().id
         logging.info(user_id)
-        if Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first():
+        if not Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first():
             return make_response(
                 jsonify(
                     {
