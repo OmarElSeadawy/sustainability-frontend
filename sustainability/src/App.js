@@ -7,6 +7,7 @@ import { Footer } from "./includes/Footer";
 import { Signup } from "./components/Signup";
 import { Tool } from "./components/Tool";
 import { SurveyPage } from "./components/SurveyPage";
+import { EditSurvey } from "./components/EditSurveyPage"
 import AuthProvider from "./Authentication/AuthProvider";
 import SurveyComponent from "./surveycomponents/Survey";
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="/tool" name="tool" element={<Tool />} />
             <Route path="/survey" name="survey" element={<SurveyComponent/>} />
             <Route path="/surveypage" name="surveypage"element={<SurveyPage/>} />
+            <Route path="/edit-survey/:surveyName" name="surveyedit"element={<EditSurvey/>} />
           </Routes>
         <Footer />
       </AuthProvider>

@@ -38,8 +38,10 @@ export const SurveyPage = () => {
   };
 
   const createSurvey = async () => {
+
     const surveyName = prompt('Please enter the survey name');
-    const surveyData = "testdatawhatever";
+    const surveyData = JSON.stringify("NULL");
+
     if (surveyName === null || surveyName === '') {
         console.log('No survey name entered');
         return;
@@ -101,14 +103,13 @@ export const SurveyPage = () => {
     }
 };
 
-  const editSurvey = (surveyId) => {
-    const surveyToEdit = surveys.find(survey => survey.id === surveyId);
-    if (surveyToEdit) {
-      navigate(`/edit-survey/${surveyId}`, { state: { surveyJson: surveyToEdit.json } });
+  const editSurvey = (surveyName) => {
+    console.log("TO EDIT:", surveyName);
+    if (surveyName) {
+      navigate(`/edit-survey/${surveyName}`);
     }
-    // Send Name to get with name
   };
-
+  
   return (
     <>
       <div className="container-fluid product py-2">
@@ -119,7 +120,7 @@ export const SurveyPage = () => {
                 <div key={index} className="fs-4 text-body d-flex justify-content-between align-items-center">
                     <span>{survey}</span>
                     <div>
-                    <button onClick={() => editSurvey(survey.id)} className="btn btn-primary rounded-pill py-2 px-3 animated zoomIn">Edit</button>
+                    <button onClick={() => editSurvey(survey)} className="btn btn-primary rounded-pill py-2 px-3 animated zoomIn">Edit</button>
                     <button onClick={() => deleteSurvey(survey)} className="btn btn-primary rounded-pill py-2 px-3 animated zoomIn">Delete</button>
                     </div>
                 </div>

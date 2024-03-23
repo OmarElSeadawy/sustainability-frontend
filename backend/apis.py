@@ -278,7 +278,6 @@ class UpdateSurvey(Resource):
     def post(self) -> Response:
         username = request.headers.get("username")
         password = request.headers.get("password")
-        survey_name = request.args.get("survey_name")
 
         if not username or not password:
             return make_response(
@@ -289,6 +288,7 @@ class UpdateSurvey(Resource):
             )
 
         survey_object = request.json
+        survey_name = survey_object["survey_name"]
         survey_data = survey_object["survey_data"]
 
         user_id = User.query.filter_by(username=username).first().id
@@ -307,7 +307,7 @@ class UpdateSurvey(Resource):
         bucket_name = "sustainability-surveys"
 
         try:
-            update_public_json_file(bucket_name, survey_name, survey_data)  # Assuming you have a function to update the file
+            update_public_json_file(bucket_name, survey_name, survey_data)
         except Exception as e:
             return make_response(
                 jsonify({"error": "something went wrong. please try again later..."}),
@@ -410,17 +410,14 @@ def update_public_json_file(bucket_name, file_key, data):
     json_data = json.dumps(data)
 
     try:
-        response = s3.put_object(
-            Bucket=bucket_name,
-            Key=file_key,
-            Body=json_data,
-            ContentType="application/json",
-        )
-        # Load the JSON data from the response
-        json_data = json.loads(response["Body"].read().decode("utf-8"))
-        return json_data
+        s3.put_object(
+        Bucket=bucket_name,
+        Key=file_key,
+        Body=json_data,
+        ContentType="application/json",
+    )
     except Exception as e:
-        print(f"Error retrieving JSON file: {e}")
+        print(f"Error saving JSON file: {e}")
         return None
     
 

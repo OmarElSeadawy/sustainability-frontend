@@ -1,52 +1,112 @@
-import "survey-react/survey.css";
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { Model } from 'survey-core';
-import React from "react";
+import AuthContext from '../Authentication/AuthContext';
+import { json } from "../surveycomponents/json";
+import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
-import "survey-core/defaultV2.min.css";
-import { themeJson } from "./theme";
-import { json } from "./json";
-import "survey-core/survey.i18n";
-import "survey-core/i18n/arabic";
+import { themeJson } from "../surveycomponents/theme";
 
-export const EditSurveyPage = () => {
+export const EditSurvey = () => {
+
+  const { user } = useContext(AuthContext);
+  const [surveyData, setSurveyData] = useState(null);
   const { state } = useLocation();
-  const { surveyId } = useParams();
-  const surveyJson = state.surveyJson;
+  const { surveyName } = useParams();
+  const [survey, setSurvey] = useState(null);
 
-  const storageItemKey = `survey-${surveyId}`;
+  const storageItemKey = `survey-${surveyName}`;
 
-  const survey = new Model(surveyJson);
-  survey.onValueChanged.add(() => saveSurveyData(survey));
-  survey.onCurrentPageChanged.add(() => saveSurveyData(survey));
-
-  const saveSurveyData = (survey) => {
+  function saveSurveyData(survey) {
     const data = survey.data;
     data.pageNo = survey.currentPageNo;
     window.localStorage.setItem(storageItemKey, JSON.stringify(data));
+  }
+
+  survey.onValueChanged.add(saveSurveyData);
+  survey.onCurrentPageChanged.add(saveSurveyData);
+  
+
+  const saveDataToApi = async () => {
+    const data = window.localStorage.getItem(storageItemKey);
+    if (data) {
+      try {
+        console.log(`Updating survey: ${surveyName}`);
+        const response = await axios({
+            method: 'post',
+            url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/update_survey',
+            headers: {
+                'username': user.username,
+                'password': user.password
+            },
+            data: {
+                survey_name: surveyName,
+                survey_data: data
+            }
+        });
+
+        if (response.status === 201) {
+            console.log('Survey Updated successfully');
+            return Promise.resolve(response);
+        } else {
+            return Promise.reject(new Error('Failed to update survey'));
+        }
+    } catch (error) {
+        console.error(error);
+        return Promise.reject(error);
+    }
+    }
+  };
+
+  const GetSurvey = async () => {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/get_survey',
+        headers: {
+          'username': user.username,
+          'password': user.password
+        },
+        params: {
+          survey_name: surveyName
+        }
+      });
+      if (response.status === 200) {
+        setSurveyData(response.data);
+        return Promise.resolve(response);
+      } else {
+        return Promise.reject(new Error('Failed to load survey'));
+      }
+    } catch (error) {
+      console.error(error);
+      return Promise.reject(error);
+    }
+  };
+
+  const handleBeforeUnload = (event) => {
+    event.preventDefault();
+    saveDataToApi();
   };
 
   useEffect(() => {
-    const prevData = window.localStorage.getItem(storageItemKey) || null;
-    if (prevData) {
-      const data = JSON.parse(prevData);
+    GetSurvey(surveyName).then((response) => {
+      const survey = new Model(json);
+      const data = JSON.parse(response.data);
       survey.data = data;
-      if (data.pageNo) {
+      if(data.pageNo) {
         survey.currentPageNo = data.pageNo;
       }
-    }
+      survey.applyTheme(themeJson);
+      setSurvey(survey);
+    });
+  
+    window.addEventListener('beforeunload', handleBeforeUnload);  
+  }, [surveyName]);
 
-    return async () => {
-      // Save the changes to the API when the component is unmounted
-      await axios.put(`/api/surveys/${surveyId}`, { json: survey.data });
-      // Empty the local storage after the survey is saved
-      window.localStorage.setItem(storageItemKey, "");
-    };
-  }, [survey, surveyId]);
 
   return (
-    <Survey model={survey} />
+    <div>
+      {survey && <Survey model={survey} />}
+  </div>
   );
 };
