@@ -303,7 +303,9 @@ class UpdateSurvey(Resource):
                     {
                         "error": "Cannot find survey",
                         'user_id': user_id,
-                        'survey_name': survey_name
+                        'survey_name': survey_name,
+                        'username' : username,
+                        'survey_object' : survey_object
                     }
                 ),
                 HTTPStatus.BAD_REQUEST,
