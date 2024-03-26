@@ -13,12 +13,9 @@ export const Login = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("Logging in Login.js");
         login(username, password)
             .then(() => {
                 navigate('/');
-                console.log(isLoggedin);
-                console.log(user);
             })
             .catch(error => {
                 console.error(error);

@@ -1,4 +1,4 @@
-import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import AuthContext from '../Authentication/AuthContext';
@@ -10,27 +10,22 @@ import { themeJson } from "../surveycomponents/theme";
 export const EditSurvey = () => {
 
   const { user } = useContext(AuthContext);
-  const [surveyData, setSurveyData] = useState(null);
-  const { state } = useLocation();
+  const [ surveyData, setSurveyData ] = useState(null);
   const { surveyName } = useParams();
   const [survey, setSurvey] = useState(null);
 
   const storageItemKey = `survey-${surveyName}`;
 
   function saveSurveyData(survey) {
-    console.log("SAVING");
     const data = survey.data;
     data.pageNo = survey.currentPageNo;
     window.localStorage.setItem(storageItemKey, JSON.stringify(data));
   }
 
   const saveDataToApi = async () => {
-    console.log("Updating DB");
     const data = window.localStorage.getItem(storageItemKey);
-    console.log("DATA : ", data)
     if (data) {
       try {
-        console.log(`Updating survey: ${surveyName}`);
         const response = await axios({
             method: 'post',
             url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/update_survey',
@@ -43,9 +38,7 @@ export const EditSurvey = () => {
                 survey_data: data
             }
         });
-        console.log("UPDATE API CALLED");
         if (response.status === 200) {
-            console.log('Survey Updated successfully');
             return Promise.resolve(response);
         } else {
             return Promise.reject(new Error('Failed to update survey'));

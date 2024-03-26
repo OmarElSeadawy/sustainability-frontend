@@ -14,7 +14,6 @@ export const SurveyPage = () => {
 
   const loadSurveys = async () => {
     try {
-      console.log(`Loading surveys for user: ${user}`);
       const response = await axios({
         method: 'get',
         url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/get_all_surveys',
@@ -26,7 +25,6 @@ export const SurveyPage = () => {
   
       if (response.status === 200) {
         setSurveys(response.data.survey_names);
-        console.log(response.data.survey_names)
         return Promise.resolve(response);
       } else {
         return Promise.reject(new Error('Failed to load surveys'));
@@ -43,12 +41,10 @@ export const SurveyPage = () => {
     const surveyData = JSON.stringify("NULL");
 
     if (surveyName === null || surveyName === '') {
-        console.log('No survey name entered');
         return;
     }
 
     try {
-        console.log(`Creating survey: ${surveyName}`);
         const response = await axios({
             method: 'post',
             url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/create_survey',
@@ -63,7 +59,6 @@ export const SurveyPage = () => {
         });
 
         if (response.status === 201) {
-            console.log('Survey created successfully');
             window.location.reload();
             return Promise.resolve(response);
         } else {
@@ -77,7 +72,6 @@ export const SurveyPage = () => {
 
   const deleteSurvey = async (surveyName) => {
     try {
-        console.log(`Deleting survey: ${surveyName}`);
         const response = await axios({
             method: 'post',
             url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/delete_survey',
@@ -91,7 +85,6 @@ export const SurveyPage = () => {
         });
 
         if (response.status === 200) {
-            console.log('Survey deleted successfully');
             window.location.reload();
             return Promise.resolve(response);
         } else {
@@ -104,9 +97,7 @@ export const SurveyPage = () => {
 };
 
   const editSurvey = (surveyName) => {
-    console.log("TO EDIT:", surveyName);
     if (surveyName) {
-      console.log("Navigating to Edit");
       navigate(`/edit-survey/${surveyName}`);
     }
   };

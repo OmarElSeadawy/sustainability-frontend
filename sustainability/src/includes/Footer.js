@@ -29,17 +29,17 @@ export const Footer = () => {
                         <p className="mb-2"><i className="fa fa-phone-alt text-primary me-3" />+012 345 67890</p>
                         <p className="mb-2"><i className="fa fa-envelope text-primary me-3" />sustainability@aucegypt.edu</p>
                         <div className="d-flex pt-3">
-                            <a className="btn btn-square btn-primary rounded-circle me-2" href="#"><i className="fab fa-twitter" /></a>
-                            <a className="btn btn-square btn-primary rounded-circle me-2" href="#"><i className="fab fa-facebook-f" /></a>
-                            <a className="btn btn-square btn-primary rounded-circle me-2" href="#"><i className="fab fa-youtube" /></a>
-                            <a className="btn btn-square btn-primary rounded-circle me-2" href="#"><i className="fab fa-linkedin-in" /></a>
+                            <a className="btn btn-square btn-primary rounded-circle me-2" href="https://www.twitter.com"><i className="fab fa-twitter" /></a>
+                            <a className="btn btn-square btn-primary rounded-circle me-2" href="https://www.facebook.com"><i className="fab fa-facebook-f" /></a>
+                            <a className="btn btn-square btn-primary rounded-circle me-2" href="https://www.youtube.com"><i className="fab fa-youtube" /></a>
+                            <a className="btn btn-square btn-primary rounded-circle me-2" href="https://www.linkedin.com"><i className="fab fa-linkedin-in" /></a>
                         </div>
                     </div>
                     <div className="col-lg-3 col-md-6">
                         <h4 className="text-primary mb-4">Quick Links</h4>
-                        <a className="btn btn-link" href="#">About Us</a>
-                        <a className="btn btn-link" href="#">Our Tool</a>
-                        <a className="btn btn-link" href="#">Contact Us</a>
+                        <a className="btn btn-link" href="aucegypt.edu">About Us</a>
+                        <a className="btn btn-link" href="aucegypt.edu">Our Tool</a>
+                        <a className="btn btn-link" href="aucegypt.edu">Contact Us</a>
                     </div>
                     <div className="col-lg-3 col-md-6">
                         <h4 className="text-primary mb-4">Business Hours</h4>

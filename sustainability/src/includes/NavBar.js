@@ -1,13 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HashLink } from 'react-router-hash-link';
 import AuthContext from "../Authentication/AuthContext";
 import React, { useContext } from 'react';
 
 export const Navbar = () => {
     const { isLoggedIn, user, logout } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleLogout = () => {
         logout();
+        navigate('/login');
       };
     
     return (

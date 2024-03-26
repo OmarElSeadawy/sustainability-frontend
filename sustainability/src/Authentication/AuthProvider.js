@@ -16,9 +16,7 @@ const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (username, password) => {
-        console.log("Logging in AuthProvider.js");
         try {
-            console.log(`Logging in with username: ${username} and password: ${password}`);
             const response = await axios({
                 method: 'post',
                 url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/login',
@@ -63,6 +61,7 @@ const AuthProvider = ({ children }) => {
         setIsLoggedIn(false);
         localStorage.setItem('isLoggedIn', 'false');
         localStorage.removeItem('user'); 
+        localStorage.clear();
         navigate('/login'); 
     };
 
