@@ -443,13 +443,10 @@ def delete_json_file(bucket_name, file_key):
     logging.info(s3)
     
     try:
-        response = s3.delete_object(
+        s3.delete_object(
             Bucket=bucket_name,
             Key=file_key
         )
-        # Load the JSON data from the response
-        json_data = json.loads(response["Body"].read().decode("utf-8"))
-        return json_data
     except Exception as e:
         print(f"Error retrieving JSON file: {e}")
         return None
