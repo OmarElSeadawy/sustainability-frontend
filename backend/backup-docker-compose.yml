@@ -16,19 +16,6 @@ services:
     entrypoint:
       - /app/run.sh
 
-  frontend:
-      container_name: frontend
-      build: 
-        context: ../sustainability
-        dockerfile: Dockerfile
-      volumes:
-        - './:/app'
-        - '/app/node_modules'
-      ports:
-        - 3000:3000
-      stdin_open: true
-      command: npm start
-      
   nginx:
     image: nginx
     ports:
