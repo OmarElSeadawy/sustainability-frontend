@@ -28,7 +28,7 @@ export const EditSurvey = () => {
       try {
         const response = await axios({
             method: 'post',
-            url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/update_survey',
+            url: 'http://3.126.123.215:5000/api/update_survey',
             headers: {
                 'username': user.username,
                 'password': user.password
@@ -54,7 +54,7 @@ export const EditSurvey = () => {
     try {
       const response = await axios({
         method: 'get',
-        url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/get_survey',
+        url: 'http://3.126.123.215:5000/api/get_survey',
         headers: {
           'username': user.username,
           'password': user.password

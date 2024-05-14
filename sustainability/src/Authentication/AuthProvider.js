@@ -19,11 +19,13 @@ const AuthProvider = ({ children }) => {
         try {
             const response = await axios({
                 method: 'post',
-                url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/login',
+                url: 'http://3.126.123.215:5000/api/login',
                 headers: {
                     'username': username,
-                    'password': password
-                }
+                    'password': password,
+                    'Content-Type': 'application/json',
+		}
+		   
             });
 
             if (response.status === 200) {
@@ -45,10 +47,11 @@ const AuthProvider = ({ children }) => {
         try {
             const response = await axios({
                 method: 'post',
-                url: 'http://ec2-3-79-60-215.eu-central-1.compute.amazonaws.com/api/register',
+                url: 'http://3.126.123.215:5000/api/register',
                 headers: {
                     'username': username,
-                    'password': password
+                    'password': password,
+                    'Content-Type': 'application/json',
                 }
             });
             return response;

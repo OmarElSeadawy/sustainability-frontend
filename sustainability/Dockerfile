@@ -1,5 +1,5 @@
 # frontend/Dockerfile
-FROM node:16.3.0-alpine
+FROM node:lts AS development
  
 WORKDIR /usr/src/app
  

@@ -92,6 +92,11 @@ export const json = {
         "html": "<h4>Location, Scope and Boundaries</h4>"
        },
        {
+        "type": "text",
+        "name": "campusname",
+        "title": "Please Specify Campus Name"
+       },
+       {
         "type": "dropdown",
         "name": "Ownership",
         "title": "Please specify the ownership of the campus",
@@ -136,6 +141,11 @@ export const json = {
           "type": "text",
           "name": "question1",
           "title": "Building Type"
+         },
+         {
+          "type": "text",
+          "name": "buildname",
+          "title": "Building Name\n"
          },
          {
           "type": "text",
@@ -240,6 +250,28 @@ export const json = {
         "title": "Does the campus calculate and report its carbon footprint on an annual basis?"
        },
        {
+        "type": "multipletext",
+        "name": "lastreportedcarbonemissionreport",
+        "visibleIf": "{campusannual} = true",
+        "title": "Please specify the amount of carbon emissions (Last Reported by Sustainability Office)",
+        "items": [
+         {
+          "name": "2024",
+          "title": "2024"
+         },
+         {
+          "name": "2023",
+          "title": "2023"
+         },
+         {
+          "name": "2022"
+         },
+         {
+          "name": "2021"
+         }
+        ]
+       },
+       {
         "type": "paneldynamic",
         "name": "campusenergyactivities",
         "visibleIf": "{campusannual} = true",
@@ -332,7 +364,7 @@ export const json = {
         "type": "text",
         "name": "BillValue",
         "visibleIf": "{periodelectricitybill} notempty",
-        "title": "Please provide the bill value.",
+        "title": "Please provide the bill value (EGP)",
         "inputType": "number"
        },
        {
@@ -395,16 +427,36 @@ export const json = {
         "name": "question9",
         "title": "What efforts are in place to improve energy efficiency in campus buildings? (Select all that apply)",
         "choices": [
-         "Effort/Initiative 01",
-         "Effort/Initiative 02",
-         "Effort/Initiative 03"
-        ]
+         "Energy Audits",
+         "Smart Building Systems",
+         "Energy-Efficient Lighting",
+         "HVAC System Updates",
+         "Building Insulation",
+         "Renewable Energy Sources",
+         "Energy-Efficient Windows and Doors",
+         "Occupancy Sensors",
+         "EE Appliances and Equipment",
+         "Energy Management Systems",
+         "Waste-to-Energy Programs",
+         "Green Roofs"
+        ],
+        "showOtherItem": true
        },
        {
-        "type": "comment",
-        "name": "carbonemissionstext",
+        "type": "checkbox",
+        "name": "carbonemissionschoices",
         "title": "What problems lead to carbon emissions?",
-        "autoGrow": true
+        "choices": [
+         "Energy-Inefficient Buildings",
+         "Traditional Energy Sources ",
+         "Wasteful Energy Practices ",
+         "Ineffective HVAC Systems",
+         "Lack of Renewable Energy Integration",
+         "Inefficient Water Heating ",
+         "Unoptimized Campus Lighting ",
+         "High-Energy Events and Facilities "
+        ],
+        "showOtherItem": true
        }
       ],
       "title": "Energy",
@@ -455,8 +507,14 @@ export const json = {
         ]
        },
        {
+        "type": "text",
+        "name": "avgdistancetravelpop",
+        "title": "Average Travel Distance for Campus Population (in Km)\n"
+       },
+       {
         "type": "checkbox",
         "name": "areasofres",
+        "visible": false,
         "title": "Areas of Residence (Check all that applies)",
         "description": "Which areas do students/ staff live\t\n",
         "choices": [
@@ -521,7 +579,7 @@ export const json = {
        {
         "type": "matrixdropdown",
         "name": "percentageaveragedistance",
-        "visibleIf": "{transportationpercentageboolean} = true",
+        "visible": false,
         "title": "Percentage of Average distance traveled for each distance category",
         "description": "Please specify percentage per distance for each category",
         "validators": [
@@ -611,24 +669,59 @@ export const json = {
        },
        {
         "type": "text",
-        "name": "traveldestination",
-        "title": "Traveling Destination (by Plane)"
-       },
-       {
-        "type": "radiogroup",
-        "name": "travelclass",
-        "title": "Traveling Class",
-        "choices": [
-         "First Class",
-         "Business Class",
-         "Economy"
-        ]
+        "name": "Totalnumbflights",
+        "title": "Total Number of Flights",
+        "inputType": "number"
        },
        {
         "type": "text",
-        "name": "numberofpeopletravelling",
-        "title": "Number of People Travelling",
+        "name": "avgpeopleflighting",
+        "title": "Average Number of People (per flight)",
         "inputType": "number"
+       },
+       {
+        "type": "multipletext",
+        "name": "percentageflightdist",
+        "title": "Percentage of Flight Distances",
+        "items": [
+         {
+          "name": "Long Haul",
+          "placeholder": ">4000Km",
+          "inputType": "number",
+          "title": "Long Haul"
+         },
+         {
+          "name": "Medium Haul",
+          "placeholder": "1500<Km<4000",
+          "inputType": "number",
+          "title": "Medium Haul"
+         },
+         {
+          "name": "Short Haul",
+          "placeholder": "<1500Km",
+          "inputType": "number"
+         }
+        ]
+       },
+       {
+        "type": "multipletext",
+        "name": "percenttravelclass",
+        "title": "Percentage of Traveling Class",
+        "items": [
+         {
+          "name": "First Class",
+          "inputType": "number"
+         },
+         {
+          "name": "Business Class",
+          "inputType": "number",
+          "title": "Business Class"
+         },
+         {
+          "name": "Economy",
+          "inputType": "number"
+         }
+        ]
        },
        {
         "type": "html",
@@ -672,7 +765,7 @@ export const json = {
        {
         "type": "text",
         "name": "fuelmoneyamount",
-        "title": "Amount of money spent on fuel",
+        "title": "Amount of money spent on fuel (Annually)",
         "inputType": "number"
        },
        {
@@ -682,19 +775,22 @@ export const json = {
         "description": "Please add information on all sponsored field trips done by the university.",
         "templateElements": [
          {
-          "type": "multipletext",
-          "name": "sponstripinfo",
-          "title": "Trip Information",
-          "items": [
-           {
-            "name": "numberofpeopletrip",
-            "title": "Number of People in Trip"
-           },
-           {
-            "name": "totalkilometerstrip",
-            "title": "Total number of Kilometers traveled"
-           }
-          ]
+          "type": "text",
+          "name": "numbofsponstrips",
+          "title": "Total Number of Trips",
+          "inputType": "number"
+         },
+         {
+          "type": "text",
+          "name": "avgdistsponsored",
+          "title": "Average Distance Traveled (in Km)",
+          "inputType": "number"
+         },
+         {
+          "type": "text",
+          "name": "AvgNumberofPeoplesponstrip",
+          "title": "Average Number of People (per Trip)",
+          "inputType": "number"
          }
         ]
        }
@@ -725,12 +821,31 @@ export const json = {
           "name": "sourceswaterusage",
           "title": "Sources Used For",
           "cellType": "checkbox",
+          "colCount": 0,
           "choices": [
-           "Source 1",
-           "Source 2",
-           "Source 3",
-           "Source 4"
-          ]
+           {
+            "value": "Source 1",
+            "text": "Drinking Water"
+           },
+           {
+            "value": "Source 2",
+            "text": "Bathroom"
+           },
+           {
+            "value": "Source 3",
+            "text": "Kitchen"
+           },
+           {
+            "value": "Source 4",
+            "text": "Irrigation and Landscape"
+           },
+           {
+            "value": "Source 5",
+            "text": "Heating/Cooling"
+           }
+          ],
+          "showOtherItem": true,
+          "storeOthersAsComment": true
          }
         ],
         "choices": [
@@ -822,19 +937,14 @@ export const json = {
         ]
        },
        {
-        "type": "matrixdynamic",
-        "name": "insights",
-        "title": "Can you provide insights into the composition of the waste generated on campus (e.g., the percentage of organic waste, plastics, paper, etc.)?",
+        "type": "matrixdropdown",
+        "name": "Insnightscomposwaste",
+        "title": "Provide insights into the composition of the waste generated on campus (e.g., the percentage of organic waste, plastics, paper, etc.)?",
         "columns": [
          {
-          "name": "Water Stream"
-         },
-         {
           "name": "Percentage",
-          "cellType": "text",
           "totalType": "sum",
-          "totalDisplayStyle": "percent",
-          "inputType": "number"
+          "totalDisplayStyle": "percent"
          }
         ],
         "choices": [
@@ -845,8 +955,16 @@ export const json = {
          5
         ],
         "cellType": "text",
-        "rowCount": 1,
-        "confirmDelete": true
+        "rows": [
+         "Organic Waste",
+         "Paper",
+         "Plastic",
+         "Metal and E-Waste",
+         "Glass",
+         "Hazardous Waste",
+         "C&D",
+         "Other"
+        ]
        },
        {
         "type": "boolean",
@@ -855,13 +973,17 @@ export const json = {
        },
        {
         "type": "checkbox",
-        "name": "question4",
+        "name": "streamsapplywaste",
         "visibleIf": "{waterstreamsemission} = true",
         "title": "Check all streams that apply:",
         "choices": [
-         "Option 1",
-         "Option 2",
-         "Option 3"
+         "Organic Waste",
+         "Paper",
+         "Plastic",
+         "Metal and E-Waste",
+         "Glass",
+         "Hazardous Waste",
+         "C&D"
         ],
         "showOtherItem": true
        },
@@ -1052,36 +1174,10 @@ export const json = {
         "confirmDelete": true
        },
        {
-        "type": "dropdown",
-        "name": "question7",
-        "title": "What is the average cost of the fertilizers used?",
-        "choices": [
-         {
-          "value": "Item 1",
-          "text": "Less Than 2000"
-         },
-         {
-          "value": "Item 2",
-          "text": "2000"
-         },
-         {
-          "value": "Item 3",
-          "text": "3500"
-         },
-         {
-          "value": "Item 4",
-          "text": "4000"
-         },
-         {
-          "value": "Item 5",
-          "text": "4500"
-         },
-         {
-          "value": "Item 6",
-          "text": "5000"
-         }
-        ],
-        "showOtherItem": true
+        "type": "text",
+        "name": "avgfertilizers",
+        "title": "What is the average cost of the fertilizers used? (estimate in Tonnes)",
+        "inputType": "number"
        }
       ],
       "title": "Landscaping"
@@ -1089,6 +1185,7 @@ export const json = {
     ],
     "showProgressBar": "top",
     "progressBarType": "buttons",
+    "progressBarShowPageTitles": true,
     "showTOC": true,
     "autoGrowComment": true,
     "allowResizeComment": false,
@@ -1097,6 +1194,5 @@ export const json = {
     "questionStartIndex": "1 -",
     "firstPageIsStarted": true,
     "showPreviewBeforeComplete": "showAllQuestions",
-    "widthMode": "responsive",
-    "fitToContainer": true
+    "widthMode": "responsive"
    }

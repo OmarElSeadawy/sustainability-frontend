@@ -13,6 +13,8 @@ services:
       - .:/app
     env_file:
       - .envs/dev.env
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
     entrypoint:
       - /app/run.sh
 
@@ -21,6 +23,8 @@ services:
       build: 
         context: ../sustainability
         dockerfile: Dockerfile
+      environment:
+        CHOKIDAR_USEPOLLING: "true"
       volumes:
         - './:/app'
         - '/app/node_modules'
@@ -28,6 +32,7 @@ services:
         - 3000:3000
       stdin_open: true
       command: npm start
+      
       
   nginx:
     image: nginx

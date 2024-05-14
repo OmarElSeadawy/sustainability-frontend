@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_restful import Api
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 from dotenv import load_dotenv
 import os
 
@@ -43,14 +43,26 @@ bcrypt = Bcrypt(app)
 babel = Babel(app)
 bp_api = Blueprint("api", __name__)
 api = Api(bp_api)
-CORS(app, resources={r"/api/*": {"origins": "*", "headers": "Content-Type, X-Auth-Token, Username, Password"}})
+CORS(app, resources={r"/api/*": {"origins": "http://3.126.123.215:3000", "supports_credentials": True, "headers": "Content-Type, X-Auth-Token, Username, Password"}})
+#CORS(bp_api)
 
-api.add_resource(Login, "/login/")
-api.add_resource(Register, "/register/")
-api.add_resource(CreateSurvey, "/create_survey/")
-api.add_resource(GetSurvey, "/get_survey/")
-api.add_resource(GetAllSurveys, "/get_all_surveys/")
-api.add_resource(DeleteSurvey, "/delete_survey/")
-api.add_resource(UpdateSurvey, "/update_survey/")
+#CORS(app, resources={r"/api/*": {"origins": "*", "supports_credentials": True, "allow_headers": ["Content-Type", "X-Auth-Token", "Username", "Password"]}})
+#CORS(app, resources={r"/api/*": {"origins": "http://3.126.123.215:3000", "supports_credentials": True}})
+api.add_resource(Login, "/login")
+api.add_resource(Register, "/register")
+api.add_resource(CreateSurvey, "/create_survey")
+api.add_resource(GetSurvey, "/get_survey")
+api.add_resource(GetAllSurveys, "/get_all_surveys")
+api.add_resource(DeleteSurvey, "/delete_survey")
+api.add_resource(UpdateSurvey, "/update_survey")
 
 app.register_blueprint(bp_api, url_prefix="/api")
+
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Token, Username, Password')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+    return response
+
