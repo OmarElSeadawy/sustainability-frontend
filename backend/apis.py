@@ -221,7 +221,7 @@ class GetSurvey(Resource):
 
         if Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first():
             # Connecting to AWS S3 Bucket
-            bucket_name = "sustainability-surveys"
+            bucket_name = "sustainability-surveyss"
             json_data = retrieve_json_file(
                 bucket_name=bucket_name, file_key=survey_name
             )
@@ -312,7 +312,7 @@ class UpdateSurvey(Resource):
             )
 
         # Connecting to AWS S3 Bucket
-        bucket_name = "sustainability-surveys"
+        bucket_name = "sustainability-surveyss"
         logging.info("REACHING BUCKET INIT")
         try:
             update_public_json_file(bucket_name, survey_name, survey_data)
@@ -354,7 +354,7 @@ class DeleteSurvey(Resource):
 
         logging.info("S3bucket connection")
         # Connecting to AWS S3 Bucket
-        bucket_name = "sustainability-surveys"
+        bucket_name = "sustainability-surveyss"
         try:
             if not db.session.is_active:
                 db.session.begin()
