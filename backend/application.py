@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_restful import Api
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS,cross_origin
+from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
 import os
 
@@ -27,7 +27,7 @@ app.config["DEBUG"] = False
 app.config["TESTING"] = False
 app.config["CSRF_ENABLED"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config['CORS_FOLLOW_REDIRECTS'] = True
+app.config["CORS_FOLLOW_REDIRECTS"] = True
 
 db = SQLAlchemy(
     app,
@@ -37,17 +37,34 @@ db = SQLAlchemy(
 migrate = Migrate(app, db, compare_type=True)
 
 
-from apis import Login, Register, CreateSurvey, GetSurvey, GetAllSurveys, DeleteSurvey, UpdateSurvey
+from apis import (
+    Login,
+    Register,
+    CreateSurvey,
+    GetSurvey,
+    GetAllSurveys,
+    DeleteSurvey,
+    UpdateSurvey,
+)
 
 bcrypt = Bcrypt(app)
 babel = Babel(app)
 bp_api = Blueprint("api", __name__)
 api = Api(bp_api)
-CORS(app, resources={r"/api/*": {"origins": "http://3.126.123.215:3000", "supports_credentials": True, "headers": "Content-Type, X-Auth-Token, Username, Password"}})
-#CORS(bp_api)
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": "http://3.68.224.176:3000",
+            "supports_credentials": True,
+            "headers": "Content-Type, X-Auth-Token, Username, Password",
+        }
+    },
+)
+# CORS(bp_api)
 
-#CORS(app, resources={r"/api/*": {"origins": "*", "supports_credentials": True, "allow_headers": ["Content-Type", "X-Auth-Token", "Username", "Password"]}})
-#CORS(app, resources={r"/api/*": {"origins": "http://3.126.123.215:3000", "supports_credentials": True}})
+# CORS(app, resources={r"/api/*": {"origins": "*", "supports_credentials": True, "allow_headers": ["Content-Type", "X-Auth-Token", "Username", "Password"]}})
+# CORS(app, resources={r"/api/*": {"origins": "http://3.126.123.215:3000", "supports_credentials": True}})
 api.add_resource(Login, "/login")
 api.add_resource(Register, "/register")
 api.add_resource(CreateSurvey, "/create_survey")
@@ -61,8 +78,9 @@ app.register_blueprint(bp_api, url_prefix="/api")
 
 @app.after_request
 def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Token, Username, Password')
-    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add(
+        "Access-Control-Allow-Headers", "Content-Type, X-Auth-Token, Username, Password"
+    )
+    response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
     return response
-
