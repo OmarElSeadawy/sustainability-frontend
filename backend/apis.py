@@ -171,7 +171,7 @@ class CreateSurvey(Resource):
             )
 
         # Connecting to AWS S3 Bucket
-        bucket_name = "sustainability-surveys"
+        bucket_name = "sustainability-surveyss"
 
         try:
             create_public_json_file(bucket_name, survey_name, survey_data)
@@ -247,6 +247,7 @@ class GetSurvey(Resource):
     def post(self) -> Response:
         return jsonify({"dummy": "This is a successful request"})
 
+
 class GetAllSurveys(Resource):
     def get(self) -> Response:
         logging.info("Inside get all surveys")
@@ -261,15 +262,15 @@ class GetAllSurveys(Resource):
                 ),
                 HTTPStatus.BAD_REQUEST,
             )
-        
+
         user_id = User.query.filter_by(username=username).first().id
         logging.info(user_id)
         surveys = Survey.query.filter_by(user_id=user_id).all()
         survey_names = [survey.survey_name for survey in surveys]
         logging.info(surveys)
         logging.info(survey_names)
-        return jsonify({'survey_names': survey_names})
-        
+        return jsonify({"survey_names": survey_names})
+
     def post(self) -> Response:
         return jsonify({"dummy": "This is a successful request"})
 
@@ -294,7 +295,6 @@ class UpdateSurvey(Resource):
         logging.info("survey object read")
         logging.info(survey_object)
 
-
         user_id = User.query.filter_by(username=username).first().id
         logging.info(user_id)
         if not Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first():
@@ -302,10 +302,10 @@ class UpdateSurvey(Resource):
                 jsonify(
                     {
                         "error": "Cannot find survey",
-                        'user_id': user_id,
-                        'survey_name': survey_name,
-                        'username' : username,
-                        'survey_object' : survey_object
+                        "user_id": user_id,
+                        "survey_name": survey_name,
+                        "username": username,
+                        "survey_object": survey_object,
                     }
                 ),
                 HTTPStatus.BAD_REQUEST,
@@ -313,17 +313,16 @@ class UpdateSurvey(Resource):
 
         # Connecting to AWS S3 Bucket
         bucket_name = "sustainability-surveys"
-        logging.info("REACHING BUCKET INIT");
+        logging.info("REACHING BUCKET INIT")
         try:
             update_public_json_file(bucket_name, survey_name, survey_data)
-            return make_response(
-                jsonify({"success": "Bucket Updated"})
-            )
+            return make_response(jsonify({"success": "Bucket Updated"}))
         except Exception as e:
             return make_response(
                 jsonify({"error": "something went wrong. please try again later..."}),
                 HTTPStatus.BAD_REQUEST,
             )
+
 
 class DeleteSurvey(Resource):
     def post(self) -> Response:
@@ -337,18 +336,18 @@ class DeleteSurvey(Resource):
                 ),
                 HTTPStatus.BAD_REQUEST,
             )
-        
+
         survey_name = request.json["survey_name"]
         user_id = User.query.filter_by(username=username).first().id
 
-        survey = Survey.query.filter_by(user_id=user_id, survey_name=survey_name).first()
-        logging.info(survey_name,user_id,survey)
+        survey = Survey.query.filter_by(
+            user_id=user_id, survey_name=survey_name
+        ).first()
+        logging.info(survey_name, user_id, survey)
         if not survey:
             return make_response(
                 jsonify(
-                    {
-                        "error": "no survey with the given name exists for this user"
-                    }
+                    {"error": "no survey with the given name exists for this user"}
                 ),
                 HTTPStatus.BAD_REQUEST,
             )
@@ -362,7 +361,7 @@ class DeleteSurvey(Resource):
             db.session.delete(survey)
             db.session.commit()
             logging.info("Db deletion")
-            delete_json_file(bucket_name, survey_name)  
+            delete_json_file(bucket_name, survey_name)
             logging.info("json deletion")
             return make_response(
                 jsonify({"message": "survey deleted successfully"}),
@@ -374,6 +373,7 @@ class DeleteSurvey(Resource):
                 jsonify({"error": "something went wrong. please try again later..."}),
                 HTTPStatus.BAD_REQUEST,
             )
+
 
 def create_public_json_file(bucket_name, file_key, data):
     session = boto3.Session(
@@ -410,6 +410,7 @@ def retrieve_json_file(bucket_name, file_key):
         print(f"Error retrieving JSON file: {e}")
         return None
 
+
 def update_public_json_file(bucket_name, file_key, data):
     session = boto3.Session(
         aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
@@ -422,15 +423,15 @@ def update_public_json_file(bucket_name, file_key, data):
 
     try:
         s3.put_object(
-        Bucket=bucket_name,
-        Key=file_key,
-        Body=json_data,
-        ContentType="application/json",
-    )
+            Bucket=bucket_name,
+            Key=file_key,
+            Body=json_data,
+            ContentType="application/json",
+        )
     except Exception as e:
         print(f"Error saving JSON file: {e}")
         return None
-    
+
 
 def delete_json_file(bucket_name, file_key):
     session = boto3.Session(
@@ -441,12 +442,9 @@ def delete_json_file(bucket_name, file_key):
     logging.info(session)
     s3 = session.client("s3")
     logging.info(s3)
-    
+
     try:
-        s3.delete_object(
-            Bucket=bucket_name,
-            Key=file_key
-        )
+        s3.delete_object(Bucket=bucket_name, Key=file_key)
     except Exception as e:
         print(f"Error retrieving JSON file: {e}")
         return None
