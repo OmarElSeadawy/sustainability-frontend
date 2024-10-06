@@ -19,7 +19,7 @@ const AuthProvider = ({ children }) => {
         try {
             const response = await axios({
                 method: 'post',
-                url: 'http://3.126.123.215:5000/api/login',
+                url: 'http://3.70.8.159:5000/api/login',
                 headers: {
                     'username': username,
                     'password': password,
@@ -47,7 +47,7 @@ const AuthProvider = ({ children }) => {
         try {
             const response = await axios({
                 method: 'post',
-                url: 'http://3.126.123.215:5000/api/register',
+                url: 'http://3.70.8.159:5000/api/register',
                 headers: {
                     'username': username,
                     'password': password,

@@ -5,6 +5,7 @@ import AuthContext from '../Authentication/AuthContext';
 import { json } from "../surveycomponents/json";
 import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
+import { SurveyPDF } from "survey-pdf";
 import { themeJson } from "../surveycomponents/theme";
 
 export const EditSurvey = () => {
@@ -15,6 +16,32 @@ export const EditSurvey = () => {
   const [survey, setSurvey] = useState(null);
 
   const storageItemKey = `survey-${surveyName}`;
+
+  function createSurveyPdfModel (surveyModel) {
+    
+    const pdfWidth = !!surveyModel && surveyModel.pdfWidth ? surveyModel.pdfWidth : 210;
+    const pdfHeight = !!surveyModel && surveyModel.pdfHeight ? surveyModel.pdfHeight : 297;
+    const options = {
+        fontSize: 14,
+        margins: {
+            left: 10,
+            right: 10,
+            top: 10,
+            bot: 10
+        },
+        format: [pdfWidth, pdfHeight],
+        
+    };
+    const surveyPDF = new SurveyPDF(json, options);
+    if (surveyModel) {
+        surveyPDF.data = surveyModel.data;
+    }
+    
+    return surveyPDF;
+  }
+  function saveSurveyToPdf (filename, surveyModel) {
+      createSurveyPdfModel(surveyModel).save(filename);
+  }
 
   function saveSurveyData(survey) {
     const data = survey.data;
@@ -28,7 +55,7 @@ export const EditSurvey = () => {
       try {
         const response = await axios({
             method: 'post',
-            url: 'http://3.126.123.215:5000/api/update_survey',
+            url: 'http://3.70.8.159:5000/api/update_survey',
             headers: {
                 'username': user.username,
                 'password': user.password
@@ -54,7 +81,7 @@ export const EditSurvey = () => {
     try {
       const response = await axios({
         method: 'get',
-        url: 'http://3.126.123.215:5000/api/get_survey',
+        url: 'http://3.70.8.159:5000/api/get_survey',
         headers: {
           'username': user.username,
           'password': user.password
@@ -90,6 +117,15 @@ export const EditSurvey = () => {
           saveDataToApi();
         }
       })
+
+      survey.addNavigationItem({
+        id: "survey_save_as_file",
+        title: "Save as PDF",
+        action: () => {
+            saveSurveyToPdf("surveyResult.pdf", survey);
+        }
+      })
+
       survey.applyTheme(themeJson);
       survey.onValueChanged.add(saveSurveyData);
       survey.onCurrentPageChanged.add(saveSurveyData);
